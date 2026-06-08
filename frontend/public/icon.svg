@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F5D67A"/>
+      <stop offset="50%" stop-color="#C89B3C"/>
+      <stop offset="100%" stop-color="#9F7724"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <text x="50%" y="50%" dy="0.02em" text-anchor="middle" dominant-baseline="central"
+    font-family="Manrope, Arial, sans-serif" font-size="20" font-weight="800" fill="#ffffff" letter-spacing="-0.5">ERG</text>
+</svg>

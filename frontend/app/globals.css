@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  /* ===== Brand colors ===== */
+  --color-gold: #c89b3c;
+  --color-gold-soft: #e8d3a0;
+  --color-gold-light: #f5d67a;
+  --color-gold-deep: #9f7724;
+  --color-charcoal: #1f2937;
+  --color-ink: #111827;
+  --color-gray-medium: #6b7280;
+  --color-surface: #f8f9fa;
+  --color-white: #ffffff;
+
+  /* Map a few semantic aliases used across the app */
+  --color-background: #ffffff;
+  --color-foreground: #1f2937;
+  --color-muted: #6b7280;
+  --color-border: #ecedf0;
+
+  /* ===== Typography ===== */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-manrope), var(--font-inter), ui-sans-serif, sans-serif;
+
+  /* ===== Radii ===== */
+  --radius-btn: 12px;
+  --radius-card: 20px;
+  --radius-xl: 28px;
+
+  /* ===== Shadows ===== */
+  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 20px 50px rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-gold: 0 12px 30px rgba(200, 155, 60, 0.25);
+
+  /* ===== Layout ===== */
+  --container-max: 1280px;
+
+  /* ===== Easing ===== */
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1f2937;
+
+  /* Gradients (referenced via utilities below) */
+  --gradient-gold: linear-gradient(135deg, #f5d67a 0%, #c89b3c 50%, #9f7724 100%);
+  --gradient-gold-soft: linear-gradient(135deg, #e8d3a0 0%, #c89b3c 100%);
+  --gradient-charcoal: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+
+  /* Section vertical rhythm */
+  --section-y: 72px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --section-y: 120px;
+  }
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-charcoal);
+}
+
+::selection {
+  background: var(--color-gold-soft);
+  color: var(--color-charcoal);
+}
+
+/* ===== Reusable design-system utilities ===== */
+@layer components {
+  .text-gradient-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+
+  .bg-gradient-gold-soft {
+    background-image: var(--gradient-gold-soft);
+  }
+
+  .bg-gradient-charcoal {
+    background-image: var(--gradient-charcoal);
+  }
+}
+
+/* Respect reduced-motion globally as a safety net */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
