@@ -98,7 +98,7 @@ export function RevenueCycle() {
                   className="relative flex gap-5 md:gap-8"
                   initial={reduce ? false : { opacity: 0, y: 24 }}
                   whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
+                  viewport={{ once: true, margin: "0px 0px -15% 0px" }}
                   transition={{ duration: 0.5, delay: i * 0.05, ease: EASE }}
                 >
                   <div className="relative z-10 flex flex-col items-center">

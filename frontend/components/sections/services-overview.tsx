@@ -8,7 +8,7 @@ import { services } from "@/lib/services";
 
 export function ServicesOverview() {
   return (
-    <Section variant="white" id="services">
+    <Section variant="surface" id="services">
       <SectionHeading
         eyebrow="What We Do"
         title="End-to-End Revenue Cycle Services"

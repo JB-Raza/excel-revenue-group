@@ -59,37 +59,41 @@
   }
 }
 
-* {
-  border-color: var(--color-border);
-}
+/* Base element styles live in the `base` layer so Tailwind utilities
+   (e.g. text-white) can override them. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--color-charcoal);
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-charcoal);
+  }
 
-::selection {
-  background: var(--color-gold-soft);
-  color: var(--color-charcoal);
+  ::selection {
+    background: var(--color-gold-soft);
+    color: var(--color-charcoal);
+  }
 }
 
 /* ===== Reusable design-system utilities ===== */
@@ -114,6 +118,45 @@ h6 {
   }
 }
 
+/* ===== Infinite marquee (testimonials) ===== */
+@keyframes erg-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Track holds two copies; shift by half for a seamless loop. */
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: erg-marquee var(--marquee-duration, 60s) linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
 /* Respect reduced-motion globally as a safety net */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -123,5 +166,15 @@ h6 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .marquee-track {
+    animation: none;
   }
 }

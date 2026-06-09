@@ -5,9 +5,7 @@ import { useInView, useReducedMotion } from "motion/react";
 
 type CounterProps = {
   value: number;
-  /** Text shown before the number, e.g. "$". */
   prefix?: string;
-  /** Text shown after the number, e.g. "%", "+", "M+". */
   suffix?: string;
   decimals?: number;
   durationMs?: number;
@@ -24,7 +22,7 @@ export function Counter({
   className,
 }: CounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const inView = useInView(ref, { once: true, margin: "0px 0px -15% 0px" });
   const reduce = useReducedMotion();
   // When reduced motion is preferred, render the final value immediately.
   const [display, setDisplay] = useState(reduce ? value : 0);

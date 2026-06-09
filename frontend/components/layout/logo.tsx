@@ -1,11 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
 
+/** Horizontal gold ERG lockup — navbar & footer. */
+const LOGO_LOCKUP = "/excel_revenue_group_logo.png";
+
 /**
- * Brand lockup. Text-based for now (matches the gold "ERG" + charcoal wordmark).
- * When the transparent logo asset is provided, drop it in /public/logo and
- * replace the markup below with a <next/image>.
+ * Primary brand logo (gold ERG lockup with wordmark).
+ * On the charcoal footer (invert), the dark wordmark sits on a white badge.
  */
 export function Logo({
   className,
@@ -18,31 +21,22 @@ export function Logo({
     <Link
       href="/"
       aria-label={`${siteConfig.name} — home`}
-      className={cn("group inline-flex items-center gap-2.5", className)}
+      className={cn("inline-flex items-center", className)}
     >
       <span
-        className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-gold text-base font-extrabold tracking-tight text-white shadow-[var(--shadow-gold)]"
-        aria-hidden
+        className={cn(
+          "inline-flex items-center justify-center",
+          invert ? "rounded-xl bg-white p-2.5 shadow-[var(--shadow-soft)]" : "",
+        )}
       >
-        ERG
-      </span>
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-heading text-[0.95rem] font-extrabold uppercase tracking-[0.08em]",
-            invert ? "text-white" : "text-charcoal",
-          )}
-        >
-          Excel Revenue
-        </span>
-        <span
-          className={cn(
-            "font-heading text-[0.95rem] font-extrabold uppercase tracking-[0.08em]",
-            invert ? "text-white" : "text-charcoal",
-          )}
-        >
-          Group
-        </span>
+        <Image
+          src={LOGO_LOCKUP}
+          alt={`${siteConfig.name} logo`}
+          width={500}
+          height={500}
+          priority={!invert}
+          className={cn("w-auto object-contain", invert ? "h-16" : "h-20")}
+        />
       </span>
     </Link>
   );

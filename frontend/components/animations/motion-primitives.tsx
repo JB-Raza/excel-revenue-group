@@ -5,6 +5,13 @@ import { useRef, type ReactNode } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/**
+ * Shared scroll-trigger bounds. The negative bottom margin shrinks the
+ * detection area by 15% of the viewport height, so reveals only fire once an
+ * element is ~15% up from the bottom of the screen (not the instant it peeks in).
+ */
+export const REVEAL_MARGIN = "0px 0px -15% 0px";
+
 type RevealProps = {
   children: ReactNode;
   className?: string;
@@ -27,7 +34,7 @@ export function FadeUp({
       className={className}
       initial={reduce ? false : { opacity: 0, y: 28 }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once, amount: 0.2 }}
+      viewport={{ once, margin: REVEAL_MARGIN }}
       transition={{ duration, delay, ease: EASE }}
     >
       {children}
@@ -85,7 +92,7 @@ export function Stagger({
       variants={variants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, amount: 0.15 }}
+      viewport={{ once, margin: REVEAL_MARGIN }}
     >
       {children}
     </motion.div>
