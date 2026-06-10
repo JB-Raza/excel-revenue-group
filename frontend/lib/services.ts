@@ -387,6 +387,16 @@ export function getService(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);
 }
 
+/** Catch-all option for the contact form when no specific service fits. */
+export const GENERAL_INQUIRY_OPTION = "General inquiry / Not sure yet";
+
+/** Options for the contact form's "Service of interest" dropdown.
+ *  Derived from `services` so it stays in sync, plus a general catch-all. */
+export const serviceOptions: string[] = [
+  ...services.map((s) => s.title),
+  GENERAL_INQUIRY_OPTION,
+];
+
 export function getRelatedServices(slug: string): Service[] {
   const svc = getService(slug);
   if (!svc) return [];

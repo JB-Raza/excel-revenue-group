@@ -3,6 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { siteConfig } from "@/lib/site";
+import { serviceOptions } from "@/lib/services";
+import { Select } from "@/components/ui/select";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -12,17 +14,32 @@ const inputClass =
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string>("");
+  const [service, setService] = useState<string>("");
+  const [serviceTouched, setServiceTouched] = useState(false);
 
   const keyConfigured =
     siteConfig.web3FormsKey && siteConfig.web3FormsKey !== "YOUR_WEB3FORMS_ACCESS_KEY";
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    // The custom select isn't a native required field, so validate it here.
+    if (!service) {
+      setServiceTouched(true);
+      return;
+    }
+
     setStatus("submitting");
     setError("");
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    // Make the email subject reflect the selected service for easy triage.
+    const service = formData.get("service");
+    if (typeof service === "string" && service) {
+      formData.set("subject", `New consultation request — ${service}`);
+    }
 
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
@@ -34,6 +51,8 @@ export function ContactForm() {
       if (data.success) {
         setStatus("success");
         form.reset();
+        setService("");
+        setServiceTouched(false);
       } else {
         setStatus("error");
         setError(data.message || "Something went wrong. Please try again.");
@@ -117,6 +136,31 @@ export function ContactForm() {
           </label>
           <input id="practice" name="practice" className={inputClass} placeholder="Family Medicine" />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span id="service-label" className="text-sm font-medium text-charcoal">
+          Service of interest <span className="text-gold">*</span>
+        </span>
+        <input type="hidden" name="service" value={service} />
+        <Select
+          id="service"
+          labelId="service-label"
+          options={serviceOptions}
+          value={service}
+          onChange={(v) => {
+            setService(v);
+            setServiceTouched(true);
+          }}
+          placeholder="Select a service…"
+          invalid={serviceTouched}
+        />
+        {serviceTouched && !service ? (
+          <p className="flex items-center gap-1.5 text-xs text-red-600">
+            <AlertCircle className="h-3.5 w-3.5" />
+            Please select a service.
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-1.5">
