@@ -28,7 +28,7 @@ export function ContactCTA({
             aria-hidden
           />
           <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-6">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">{title}</h2>
+            <h2 className="text-4xl font-bold text-white">{title}</h2>
             <p className="text-base leading-relaxed text-white/70 sm:text-lg">
               {description}
             </p>

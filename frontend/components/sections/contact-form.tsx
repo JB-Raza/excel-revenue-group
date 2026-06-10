@@ -143,7 +143,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-gradient-gold px-6 font-semibold text-white shadow-[var(--shadow-gold)] transition-all duration-300 ease-[var(--ease-premium)] hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-70"
+        className="inline-flex h-[clamp(2.75rem,2.63rem+0.54vw,3rem)] items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-gradient-gold px-[clamp(1.25rem,1.08rem+0.76vw,1.625rem)] text-[clamp(0.9rem,0.86rem+0.16vw,0.975rem)] font-semibold text-white shadow-[var(--shadow-gold)] transition-all duration-300 ease-[var(--ease-premium)] hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-70"
       >
         {status === "submitting" ? (
           <>

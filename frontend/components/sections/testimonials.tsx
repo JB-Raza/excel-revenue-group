@@ -58,7 +58,7 @@ const testimonials: Testimonial[] = [
 
 function TestimonialCard({ t }: { t: Testimonial }) {
   return (
-    <figure className="mx-3 flex h-full w-[340px] shrink-0 flex-col gap-5 rounded-[var(--radius-card)] border border-border/60 bg-white p-8 shadow-[var(--shadow-card)] sm:w-[400px]">
+    <figure className="mx-3 flex h-full w-[280px] shrink-0 flex-col gap-5 rounded-[var(--radius-card)] border border-border/60 bg-white p-6 shadow-[var(--shadow-card)] sm:w-[400px] sm:p-8">
       <div className="flex items-center justify-between">
         <Quote className="h-8 w-8 text-gold-soft" />
         <div className="flex gap-0.5" aria-label="5 out of 5 stars">

@@ -20,13 +20,16 @@ export function Hero() {
       />
       <Container className="grid items-center gap-12 py-16 md:py-24 lg:grid-cols-2 lg:gap-8 lg:py-28">
         {/* Left: content */}
-        <SlideIn from="left" className="flex flex-col items-start gap-6">
+        <SlideIn
+          from="left"
+          className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left"
+        >
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-white px-4 py-1.5 text-sm font-semibold text-gold-deep shadow-[var(--shadow-soft)]">
             <span className="h-2 w-2 rounded-full bg-gradient-gold" />
-            Premium Medical Billing & RCM
+            Premium Medical Billing &amp; RCM
           </span>
 
-          <h1 className="font-heading text-4xl font-extrabold leading-[1.1] text-charcoal sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-6xl font-extrabold leading-[1.1] text-charcoal">
             Maximize{" "}
             <span className="text-gradient-gold">Revenue.</span>
             <br />
@@ -39,7 +42,7 @@ export function Hero() {
             transparent reporting at every step.
           </p>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <Button href="/contact" size="lg">
               Schedule Consultation
               <ArrowRight className="h-4 w-4" />
@@ -49,7 +52,7 @@ export function Hero() {
             </Button>
           </div>
 
-          <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-3">
+          <ul className="mt-2 flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start">
             {trustSignals.map(({ icon: Icon, label }) => (
               <li
                 key={label}

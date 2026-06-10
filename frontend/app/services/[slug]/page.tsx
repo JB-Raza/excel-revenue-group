@@ -71,12 +71,12 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
 
       {/* Overview + what's included */}
       <Section variant="white">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16">
           <FadeUp className="flex flex-col gap-6">
             <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-gold text-white shadow-[var(--shadow-gold)]">
               <Icon className="h-7 w-7" />
             </span>
-            <h2 className="font-heading text-2xl font-bold text-charcoal sm:text-3xl">
+            <h2 className="font-heading text-3xl font-bold text-charcoal">
               Overview
             </h2>
             <p className="text-base leading-relaxed text-gray-medium">
@@ -124,7 +124,7 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
       {/* Process */}
       <Section variant="surface">
         <FadeUp className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-2xl font-bold text-charcoal sm:text-3xl">
+          <h2 className="font-heading text-3xl font-bold text-charcoal">
             How We Deliver
           </h2>
           <p className="mt-3 text-gray-medium">
@@ -153,9 +153,9 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
       {/* FAQ */}
       {service.faqs.length > 0 ? (
         <Section variant="white">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
             <FadeUp>
-              <h2 className="font-heading text-2xl font-bold text-charcoal sm:text-3xl">
+              <h2 className="font-heading text-3xl font-bold text-charcoal">
                 Frequently Asked Questions
               </h2>
               <p className="mt-3 text-gray-medium">
@@ -177,7 +177,7 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
       {related.length > 0 ? (
         <Section variant="surface">
           <FadeUp className="mb-10">
-            <h2 className="font-heading text-2xl font-bold text-charcoal sm:text-3xl">
+            <h2 className="font-heading text-3xl font-bold text-charcoal">
               Related Services
             </h2>
           </FadeUp>

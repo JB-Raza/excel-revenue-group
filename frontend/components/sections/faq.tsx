@@ -10,13 +10,13 @@ export function Faq() {
   return (
     <Section variant="surface" id="faq">
       <JsonLd data={faqSchema(homepageFaqs)} />
-      <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
         <FadeUp>
           <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
             <span className="h-px w-6 bg-gold" aria-hidden />
             FAQ
           </span>
-          <h2 className="mt-4 font-heading text-3xl font-bold text-charcoal sm:text-4xl">
+          <h2 className="mt-4 font-heading text-4xl font-bold text-charcoal">
             Common Questions, Answered
           </h2>
           <p className="mt-4 text-gray-medium">

@@ -77,7 +77,7 @@ export default function AboutPage() {
             {stats.map((s) => (
               <StaggerItem key={s.label}>
                 <div className="flex flex-col items-center gap-2 rounded-[var(--radius-card)] border border-border/60 bg-surface p-6 text-center">
-                  <p className="font-heading text-3xl font-extrabold text-gradient-gold sm:text-4xl">
+                  <p className="font-heading text-4xl font-extrabold text-gradient-gold">
                     <Counter value={s.value} suffix={s.suffix} />
                   </p>
                   <p className="text-xs font-medium text-charcoal">{s.label}</p>
@@ -154,7 +154,7 @@ export default function AboutPage() {
                   Why ERG
                 </span>
               </span>
-              <h2 className="mt-3 font-heading text-2xl font-bold text-charcoal sm:text-3xl">
+              <h2 className="mt-3 font-heading text-3xl font-bold text-charcoal">
                 Revenue expertise, delivered like a partner — not a vendor.
               </h2>
               <p className="mt-3 text-gray-medium">

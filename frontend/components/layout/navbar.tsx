@@ -98,7 +98,7 @@ export function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
                         transition={{ duration: 0.22, ease: EASE }}
-                        className="absolute left-1/2 top-full z-50 w-[640px] -translate-x-1/2 pt-4"
+                        className="absolute left-1/2 top-full z-50 w-[min(640px,calc(100vw-2rem))] -translate-x-1/2 pt-4"
                       >
                         <div className="overflow-hidden rounded-[var(--radius-card)] border border-border/70 bg-white shadow-[var(--shadow-card)]">
                           <div className="grid grid-cols-2 gap-1 p-3">
@@ -176,11 +176,12 @@ export function Navbar() {
         </button>
       </Container>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — absolutely positioned so it overlays content
+          instead of pushing the hero down. */}
       <div
         className={cn(
-          "lg:hidden overflow-hidden border-t border-border bg-white transition-[max-height,opacity] duration-300 ease-[var(--ease-premium)]",
-          open ? "max-h-[640px] opacity-100" : "max-h-0 opacity-0",
+          "absolute inset-x-0 top-full lg:hidden overflow-hidden border-border bg-white shadow-[var(--shadow-card)] transition-[max-height,opacity] duration-300 ease-[var(--ease-premium)]",
+          open ? "max-h-[640px] border-b border-t opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <Container className="flex max-h-[560px] flex-col gap-1 overflow-y-auto py-4">

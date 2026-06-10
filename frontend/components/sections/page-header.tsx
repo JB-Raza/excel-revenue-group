@@ -65,7 +65,7 @@ export function PageHeader({
             </span>
           ) : null}
 
-          <h1 className="font-heading text-4xl font-extrabold leading-tight text-charcoal sm:text-5xl">
+          <h1 className="font-heading text-5xl font-extrabold leading-tight text-charcoal">
             {title}
           </h1>
 

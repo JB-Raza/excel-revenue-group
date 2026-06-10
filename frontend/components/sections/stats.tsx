@@ -23,7 +23,7 @@ export function Stats() {
         {stats.map((s) => (
           <StaggerItem key={s.label}>
             <div className="flex flex-col items-center gap-2 rounded-[var(--radius-card)] border border-border/60 bg-surface p-8 text-center">
-              <p className="font-heading text-4xl font-extrabold text-gradient-gold sm:text-5xl">
+              <p className="font-heading text-5xl font-extrabold text-gradient-gold">
                 <Counter value={s.value} prefix={s.prefix} suffix={s.suffix} />
               </p>
               <p className="font-heading text-base font-bold text-charcoal">

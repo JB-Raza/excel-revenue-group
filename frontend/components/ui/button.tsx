@@ -19,9 +19,9 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-10 px-4 text-sm",
-  md: "h-12 px-6 text-[0.95rem]",
-  lg: "h-14 px-8 text-base",
+  sm: "h-[clamp(2.25rem,2.13rem+0.54vw,2.5rem)] px-[clamp(0.875rem,0.79rem+0.41vw,1.125rem)] text-sm",
+  md: "h-[clamp(2.75rem,2.63rem+0.54vw,3rem)] px-[clamp(1.25rem,1.08rem+0.76vw,1.625rem)] text-[clamp(0.9rem,0.86rem+0.16vw,0.975rem)]",
+  lg: "h-[clamp(3.25rem,3.05rem+0.87vw,3.5rem)] px-[clamp(1.75rem,1.5rem+1.09vw,2.25rem)] text-base",
 };
 
 type CommonProps = {

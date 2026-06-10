@@ -13,7 +13,7 @@ export function Specialties() {
       />
 
       <Stagger
-        className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+        className="mt-14 grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
         step={0.05}
       >
         {specialties.map(({ name, icon: Icon }) => (

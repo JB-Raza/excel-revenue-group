@@ -60,7 +60,7 @@ export default function ContactPage() {
       />
 
       <Section variant="white">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-16">
           {/* Left: contact channels */}
           <FadeUp className="flex flex-col gap-6">
             <div>
@@ -85,11 +85,11 @@ export default function ContactPage() {
                   <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-gold text-white shadow-[var(--shadow-gold)]">
                     <Icon className="h-6 w-6" />
                   </span>
-                  <span>
+                  <span className="min-w-0">
                     <span className="block text-sm font-semibold text-charcoal">
                       {label}
                     </span>
-                    <span className="block text-sm text-gray-medium group-hover:text-gold">
+                    <span className="block break-words text-sm text-gray-medium group-hover:text-gold">
                       {value}
                     </span>
                   </span>
@@ -99,19 +99,19 @@ export default function ContactPage() {
 
             <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border/60 bg-surface p-6">
               <div className="flex items-center gap-3 text-sm text-charcoal">
-                <Clock className="h-5 w-5 text-gold" />
-                {siteConfig.contact.hours}
+                <Clock className="h-5 w-5 shrink-0 text-gold" />
+                <span className="min-w-0 break-words">{siteConfig.contact.hours}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-charcoal">
-                <MapPin className="h-5 w-5 text-gold" />
-                {siteConfig.contact.address}
+                <MapPin className="h-5 w-5 shrink-0 text-gold" />
+                <span className="min-w-0 break-words">{siteConfig.contact.address}</span>
               </div>
             </div>
           </FadeUp>
 
           {/* Right: form */}
           <FadeUp delay={0.1}>
-            <div className="rounded-[var(--radius-card)] border border-border/60 bg-white p-8 shadow-[var(--shadow-card)] sm:p-10">
+            <div className="rounded-[var(--radius-card)] border border-border/60 bg-white p-6 shadow-[var(--shadow-card)] sm:p-10">
               <h2 className="font-heading text-2xl font-bold text-charcoal">
                 Request a Consultation
               </h2>
