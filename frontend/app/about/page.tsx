@@ -1,14 +1,30 @@
 import type { Metadata } from "next";
-import { Target, Eye, TrendingUp, ShieldCheck, Users, HeartHandshake, Award } from "lucide-react";
+import { Target, Eye, TrendingUp, ShieldCheck, Users, HeartHandshake, Award, Quote } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Counter } from "@/components/animations/counter";
 import { FadeUp, Stagger, StaggerItem } from "@/components/animations/motion-primitives";
 import { PageHeader } from "@/components/sections/page-header";
+import { CeoPortrait } from "@/components/sections/ceo-portrait";
 import { ContactCTA } from "@/components/sections/contact-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
+
+// TODO: replace with the real CEO details, and add the photo at
+// public/images/ceo.jpg (a 4:5 portrait works best).
+const ceo = {
+  name: "[CEO Name]",
+  role: "Founder & Chief Executive Officer",
+  initials: "EC",
+  photo: "/images/ceo.jpg",
+  bio: [
+    "With years of hands-on experience in medical billing and revenue cycle management, our CEO founded Excel Revenue Group on a simple belief: providers deserve a billing partner that treats their revenue as carefully as they treat their patients.",
+    "Under this leadership, the team has built a practice rooted in accuracy, transparency, and accountability — helping practices of every size reduce denials, accelerate reimbursements, and gain full visibility into their financial health.",
+  ],
+  quote:
+    "Our success is measured by one thing — the revenue we help our clients capture and keep.",
+};
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -143,9 +159,48 @@ export default function AboutPage() {
         </Stagger>
       </Section>
 
-      {/* Why ERG strip */}
+      {/* CEO / Leadership */}
       <Section variant="surface">
-        <div className="rounded-[var(--radius-xl)] border border-border/60 bg-white p-8 shadow-[var(--shadow-card)] sm:p-12">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-16">
+          <FadeUp>
+            <CeoPortrait
+              src={ceo.photo}
+              name={ceo.name}
+              fallbackInitials={ceo.initials}
+            />
+          </FadeUp>
+
+          <FadeUp delay={0.1} className="flex flex-col gap-5">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+              <span className="h-px w-6 bg-gold" aria-hidden />
+              Leadership
+            </span>
+            <div>
+              <h2 className="font-heading text-4xl font-bold text-charcoal">
+                {ceo.name}
+              </h2>
+              <p className="mt-1 text-base font-medium text-gold-deep">{ceo.role}</p>
+            </div>
+
+            {ceo.bio.map((paragraph) => (
+              <p key={paragraph} className="text-base leading-relaxed text-gray-medium">
+                {paragraph}
+              </p>
+            ))}
+
+            <blockquote className="relative mt-2 rounded-[var(--radius-card)] border border-border/60 bg-white p-6 shadow-[var(--shadow-soft)]">
+              <Quote className="absolute -top-3 left-6 h-7 w-7 text-gold" aria-hidden />
+              <p className="font-heading text-lg font-medium italic text-charcoal">
+                {ceo.quote}
+              </p>
+            </blockquote>
+          </FadeUp>
+        </div>
+      </Section>
+
+      {/* Why ERG strip */}
+      <Section variant="white">
+        <div className="rounded-[var(--radius-xl)] border border-border/60 bg-surface p-8 shadow-[var(--shadow-card)] sm:p-12">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2">
