@@ -36,10 +36,7 @@ export function ContactForm() {
     const formData = new FormData(form);
 
     // Make the email subject reflect the selected service for easy triage.
-    const service = formData.get("service");
-    if (typeof service === "string" && service) {
-      formData.set("subject", `New consultation request — ${service}`);
-    }
+    formData.set("subject", `New consultation request — ${service}`);
 
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
