@@ -4,22 +4,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Menu, X, CalendarCheck, ChevronDown, ArrowUpRight } from "lucide-react";
+import { Menu, X, CalendarCheck, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mainNav } from "@/lib/site";
+import { mainNav, type NavItem } from "@/lib/site";
 import { services } from "@/lib/services";
+import { specialties } from "@/lib/content";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
+import {
+  NavDropdownItem,
+  NavDropdownPanel,
+  navDropdownWidthClass,
+} from "./nav-dropdown";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [mobileServices, setMobileServices] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<NavItem["dropdown"] | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<NavItem["dropdown"] | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduce = useReducedMotion();
 
@@ -40,13 +46,14 @@ export function Navbar() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-  const openServices = () => {
+  const showDropdown = (key: NonNullable<NavItem["dropdown"]>) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    setServicesOpen(true);
+    setOpenDropdown(key);
   };
-  const scheduleCloseServices = () => {
+
+  const scheduleHideDropdown = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => setServicesOpen(false), 120);
+    closeTimer.current = setTimeout(() => setOpenDropdown(null), 120);
   };
 
   return (
@@ -56,26 +63,27 @@ export function Navbar() {
         scrolled ? "border-border shadow-[var(--shadow-soft)]" : "border-transparent",
       )}
     >
-      <Container className="flex h-24 items-center justify-between">
+      <Container className="flex h-28 items-center justify-between">
         <Logo />
 
-        <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
+        <nav className="hidden items-center gap-6 xl:gap-8 lg:flex" aria-label="Main">
           {mainNav.map((item) => {
             const active = isActive(item.href);
 
-            if (item.href === "/services") {
+            if (item.dropdown) {
+              const isOpen = openDropdown === item.dropdown;
               return (
                 <div
                   key={item.href}
                   className="relative"
-                  onMouseEnter={openServices}
-                  onMouseLeave={scheduleCloseServices}
+                  onMouseEnter={() => showDropdown(item.dropdown!)}
+                  onMouseLeave={scheduleHideDropdown}
                 >
                   <Link
                     href={item.href}
-                    aria-expanded={servicesOpen}
+                    aria-expanded={isOpen}
                     className={cn(
-                      "relative flex items-center gap-1 text-sm font-medium transition-colors hover:text-gold",
+                      "relative flex items-center gap-1 text-[0.9375rem] font-medium transition-colors hover:text-gold",
                       active ? "text-gold" : "text-charcoal",
                     )}
                   >
@@ -83,7 +91,7 @@ export function Navbar() {
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 transition-transform duration-300",
-                        servicesOpen && "rotate-180",
+                        isOpen && "rotate-180",
                       )}
                     />
                     {active ? (
@@ -92,47 +100,48 @@ export function Navbar() {
                   </Link>
 
                   <AnimatePresence>
-                    {servicesOpen ? (
+                    {isOpen ? (
                       <motion.div
                         initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
                         transition={{ duration: 0.22, ease: EASE }}
-                        className="absolute left-1/2 top-full z-50 w-[min(640px,calc(100vw-2rem))] -translate-x-1/2 pt-4"
+                        className={cn(
+                          "absolute left-1/2 top-full z-50 -translate-x-1/2 pt-4",
+                          navDropdownWidthClass,
+                        )}
                       >
-                        <div className="overflow-hidden rounded-[var(--radius-card)] border border-border/70 bg-white shadow-[var(--shadow-card)]">
-                          <div className="grid grid-cols-2 gap-1 p-3">
-                            {services.map((service) => {
-                              const Icon = service.icon;
-                              return (
-                                <Link
-                                  key={service.slug}
-                                  href={`/services/${service.slug}`}
-                                  className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface"
-                                >
-                                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gold-soft/30 text-gold-deep transition-colors group-hover:bg-gradient-gold group-hover:text-white">
-                                    <Icon className="h-5 w-5" />
-                                  </span>
-                                  <span className="flex flex-col">
-                                    <span className="text-sm font-semibold text-charcoal group-hover:text-gold">
-                                      {service.title}
-                                    </span>
-                                    <span className="line-clamp-1 text-xs text-gray-medium">
-                                      {service.shortDescription}
-                                    </span>
-                                  </span>
-                                </Link>
-                              );
-                            })}
-                          </div>
-                          <Link
-                            href="/services"
-                            className="flex items-center justify-between border-t border-border/60 bg-surface px-6 py-4 text-sm font-semibold text-charcoal transition-colors hover:text-gold"
+                        {item.dropdown === "services" ? (
+                          <NavDropdownPanel
+                            footerHref="/services"
+                            footerLabel="View all services"
                           >
-                            View all services
-                            <ArrowUpRight className="h-4 w-4 text-gold" />
-                          </Link>
-                        </div>
+                            {services.map((service) => (
+                              <NavDropdownItem
+                                key={service.slug}
+                                href={`/services/${service.slug}`}
+                                label={service.title}
+                                description={service.shortDescription}
+                                icon={service.icon}
+                              />
+                            ))}
+                          </NavDropdownPanel>
+                        ) : (
+                          <NavDropdownPanel
+                            footerHref="/specialties"
+                            footerLabel="View all specialties"
+                          >
+                            {specialties.map((specialty) => (
+                              <NavDropdownItem
+                                key={specialty.slug}
+                                href={`/specialties#${specialty.slug}`}
+                                label={specialty.name}
+                                icon={specialty.icon}
+                                image={specialty.image}
+                              />
+                            ))}
+                          </NavDropdownPanel>
+                        )}
                       </motion.div>
                     ) : null}
                   </AnimatePresence>
@@ -145,7 +154,7 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative text-sm font-medium transition-colors hover:text-gold",
+                  "relative text-[0.9375rem] font-medium transition-colors hover:text-gold",
                   active ? "text-gold" : "text-charcoal",
                 )}
               >
@@ -176,17 +185,16 @@ export function Navbar() {
         </button>
       </Container>
 
-      {/* Mobile drawer — absolutely positioned so it overlays content
-          instead of pushing the hero down. */}
       <div
         className={cn(
           "absolute inset-x-0 top-full lg:hidden overflow-hidden border-border bg-white shadow-[var(--shadow-card)] transition-[max-height,opacity] duration-300 ease-[var(--ease-premium)]",
-          open ? "max-h-[640px] border-b border-t opacity-100" : "max-h-0 opacity-0",
+          open ? "max-h-[720px] border-b border-t opacity-100" : "max-h-0 opacity-0",
         )}
       >
-        <Container className="flex max-h-[560px] flex-col gap-1 overflow-y-auto py-4">
+        <Container className="flex max-h-[640px] flex-col gap-1 overflow-y-auto py-4">
           {mainNav.map((item) => {
-            if (item.href === "/services") {
+            if (item.dropdown) {
+              const expanded = mobileExpanded === item.dropdown;
               return (
                 <div key={item.href} className="flex flex-col">
                   <div className="flex items-center">
@@ -204,15 +212,17 @@ export function Navbar() {
                     </Link>
                     <button
                       type="button"
-                      aria-label={mobileServices ? "Collapse services" : "Expand services"}
-                      aria-expanded={mobileServices}
-                      onClick={() => setMobileServices((v) => !v)}
+                      aria-label={expanded ? `Collapse ${item.label}` : `Expand ${item.label}`}
+                      aria-expanded={expanded}
+                      onClick={() =>
+                        setMobileExpanded((v) => (v === item.dropdown ? null : item.dropdown!))
+                      }
                       className="grid h-11 w-11 place-items-center rounded-lg text-charcoal hover:bg-surface"
                     >
                       <ChevronDown
                         className={cn(
                           "h-5 w-5 transition-transform duration-300",
-                          mobileServices && "rotate-180",
+                          expanded && "rotate-180",
                         )}
                       />
                     </button>
@@ -220,19 +230,30 @@ export function Navbar() {
                   <div
                     className={cn(
                       "overflow-hidden pl-3 transition-[max-height,opacity] duration-300 ease-[var(--ease-premium)]",
-                      mobileServices ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0",
+                      expanded ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0",
                     )}
                   >
-                    {services.map((service) => (
-                      <Link
-                        key={service.slug}
-                        href={`/services/${service.slug}`}
-                        onClick={() => setOpen(false)}
-                        className="block rounded-lg px-3 py-2.5 text-sm text-gray-medium transition-colors hover:bg-surface hover:text-gold"
-                      >
-                        {service.title}
-                      </Link>
-                    ))}
+                    {item.dropdown === "services"
+                      ? services.map((service) => (
+                          <Link
+                            key={service.slug}
+                            href={`/services/${service.slug}`}
+                            onClick={() => setOpen(false)}
+                            className="block rounded-lg px-3 py-2.5 text-sm text-gray-medium transition-colors hover:bg-surface hover:text-gold"
+                          >
+                            {service.title}
+                          </Link>
+                        ))
+                      : specialties.map((specialty) => (
+                          <Link
+                            key={specialty.slug}
+                            href={`/specialties#${specialty.slug}`}
+                            onClick={() => setOpen(false)}
+                            className="block rounded-lg px-3 py-2.5 text-sm text-gray-medium transition-colors hover:bg-surface hover:text-gold"
+                          >
+                            {specialty.name}
+                          </Link>
+                        ))}
                   </div>
                 </div>
               );

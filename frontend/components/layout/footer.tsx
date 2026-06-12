@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
-import { Phone, Mail, MessageCircle, MapPin, Clock } from "lucide-react";
+import { Phone, Mail, MessageCircle, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Logo } from "./logo";
 import { siteConfig, mainNav, whatsappUrl, mailtoUrl } from "@/lib/site";
@@ -146,13 +146,9 @@ export function Footer() {
                   WhatsApp Us
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 shrink-0 text-gold" />
-                {siteConfig.contact.address}
-              </li>
-              <li className="flex items-center gap-3">
-                <Clock className="h-4 w-4 shrink-0 text-gold" />
-                {siteConfig.contact.hours}
+              <li className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                <span className="min-w-0 break-words">{siteConfig.contact.address}</span>
               </li>
             </ul>
           </div>

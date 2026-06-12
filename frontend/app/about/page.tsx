@@ -10,6 +10,7 @@ import { ContactCTA } from "@/components/sections/contact-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
+import { pageHeroImages } from "@/lib/images";
 
 // TODO: replace with the real CEO details, and add the photo at
 // public/images/ceo.jpg (a 4:5 portrait works best).
@@ -64,6 +65,7 @@ export default function AboutPage() {
         title="Your Partner in Revenue Growth"
         description="Excel Revenue Group helps healthcare providers excel their revenue through expert billing, transparent reporting, and a relentless focus on results."
         breadcrumbs={[{ name: "Home", href: "/" }, { name: "About" }]}
+        image={pageHeroImages.about}
       />
 
       {/* Overview */}

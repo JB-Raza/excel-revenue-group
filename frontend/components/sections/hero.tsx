@@ -1,8 +1,10 @@
+import Image from "next/image";
 import { ArrowRight, ShieldCheck, Star, Zap } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { SlideIn } from "@/components/animations/motion-primitives";
 import { HeroVisual } from "./hero-visual";
+import { pageHeroImages } from "@/lib/images";
 
 const trustSignals = [
   { icon: ShieldCheck, label: "HIPAA Compliant" },
@@ -12,13 +14,26 @@ const trustSignals = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-surface">
+    <section className="relative min-h-[28rem] overflow-hidden bg-surface md:min-h-[36rem] lg:min-h-[42rem]">
+      {/* Hero background photo — visible but softened for text legibility */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <Image
+          src={pageHeroImages.home.src}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-center scale-105"
+          priority
+        />
+        <div className="absolute inset-0 bg-surface/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface/85 from-0% via-surface/35 via-38% to-surface/5 to-100%" />
+      </div>
       {/* Decorative gradient shapes */}
       <div
         className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-gold-soft/20 blur-3xl"
         aria-hidden
       />
-      <Container className="grid items-center gap-12 py-16 md:py-24 lg:grid-cols-2 lg:gap-8 lg:py-28">
+      <Container className="relative z-10 grid items-center gap-12 py-16 md:py-24 lg:grid-cols-2 lg:gap-8 lg:py-28">
         {/* Left: content */}
         <SlideIn
           from="left"

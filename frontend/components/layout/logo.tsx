@@ -35,7 +35,7 @@ export function Logo({
           width={500}
           height={500}
           priority={!invert}
-          className={cn("w-auto object-contain", invert ? "h-16" : "h-20")}
+          className={cn("w-auto object-contain", invert ? "h-20" : "h-24")}
         />
       </span>
     </Link>

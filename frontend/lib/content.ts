@@ -14,32 +14,133 @@ import {
   Hand,
 } from "lucide-react";
 
+export type Specialty = {
+  name: string;
+  slug: string;
+  icon: LucideIcon;
+  /** PNG icon path when available; Lucide used as fallback. */
+  image?: string;
+  description: string;
+};
+
 /** Specialties ERG provides billing for. */
-export const specialties: { name: string; icon: LucideIcon }[] = [
-  { name: "Cardiology", icon: Heart },
-  { name: "Orthopedics", icon: Bone },
-  { name: "Behavioral Health", icon: Brain },
-  { name: "Internal Medicine", icon: Stethoscope },
-  { name: "Pediatrics", icon: Baby },
-  { name: "Ophthalmology", icon: Eye },
-  { name: "Family Medicine", icon: Activity },
-  { name: "Pain Management", icon: Syringe },
-  { name: "General Surgery", icon: Scissors },
-  { name: "Laboratory & Pathology", icon: Microscope },
-  { name: "Pharmacy", icon: Pill },
-  { name: "Chiropractic", icon: Hand },
+export const specialties: Specialty[] = [
+  {
+    name: "Cardiology",
+    slug: "cardiology",
+    icon: Heart,
+    image: "/images/specialties/cardiology.png",
+    description: "Complex cardiac coding, cath lab billing, and payer-specific cardiology rules.",
+  },
+  {
+    name: "Orthopedics",
+    slug: "orthopedics",
+    icon: Bone,
+    image: "/images/specialties/orthopedics.png",
+    description: "Surgical and non-surgical ortho billing with modifier accuracy and global period tracking.",
+  },
+  {
+    name: "Behavioral Health",
+    slug: "behavioral-health",
+    icon: Brain,
+    image: "/images/specialties/behavioral-health.png",
+    description: "Mental health, psychiatry, and substance-use billing with session-level precision.",
+  },
+  {
+    name: "Internal Medicine",
+    slug: "internal-medicine",
+    icon: Stethoscope,
+    image: "/images/specialties/internal-medicine.png",
+    description: "High-volume primary and internal medicine with chronic care and E/M optimization.",
+  },
+  {
+    name: "Pediatrics",
+    slug: "pediatrics",
+    icon: Baby,
+    image: "/images/specialties/pediatrics.png",
+    description: "Well-child visits, immunizations, and pediatric-specific payer requirements.",
+  },
+  {
+    name: "Ophthalmology",
+    slug: "ophthalmology",
+    icon: Eye,
+    image: "/images/specialties/ophthalmology.png",
+    description: "Surgical and medical eye care billing including injectables and ASC claims.",
+  },
+  {
+    name: "Family Medicine",
+    slug: "family-medicine",
+    icon: Activity,
+    image: "/images/specialties/family-medicine.png",
+    description: "Full-scope family practice billing from preventive care to minor procedures.",
+  },
+  {
+    name: "Pain Management",
+    slug: "pain-management",
+    icon: Syringe,
+    image: "/images/specialties/pain-management.png",
+    description: "Interventional pain procedures, injections, and prior-authorization workflows.",
+  },
+  {
+    name: "General Surgery",
+    slug: "general-surgery",
+    icon: Scissors,
+    image: "/images/specialties/general-surgery.png",
+    description: "Surgical billing with correct global periods, implants, and assistant surgeon rules.",
+  },
+  {
+    name: "Laboratory & Pathology",
+    slug: "laboratory-pathology",
+    icon: Microscope,
+    image: "/images/specialties/laboratory-pathology.png",
+    description: "Lab requisitions, panel coding, and pathology with compliance-focused claim scrubbing.",
+  },
+  {
+    name: "Pharmacy",
+    slug: "pharmacy",
+    icon: Pill,
+    description: "Pharmacy billing, dispensing fees, and specialty drug claim management.",
+  },
+  {
+    name: "Chiropractic",
+    slug: "chiropractic",
+    icon: Hand,
+    image: "/images/specialties/chiropractic.png",
+    description: "Chiropractic care plans, visit limits, and payer-specific chiropractic policies.",
+  },
 ];
 
-/** EMR / practice-management systems ERG works inside. */
-export const emrSystems: string[] = [
-  "Epic",
-  "Athenahealth",
-  "eClinicalWorks",
-  "AdvancedMD",
-  "Kareo",
-  "NextGen",
-  "DrChrono",
-  "Practice Fusion",
+export type EmrSystem = {
+  name: string;
+  logo: string;
+};
+
+/** EMR / practice-management systems ERG integrates with. */
+export const emrSystems: EmrSystem[] = [
+  { name: "AdvancedMD", logo: "/images/emr/advancedmd.jpg" },
+  { name: "Athena Health", logo: "/images/emr/athenahealth.jpg" },
+  { name: "Care Cloud", logo: "/images/emr/carecloud.jpg" },
+  { name: "Collaborate MD", logo: "/images/emr/collaboratemd.jpg" },
+  { name: "Cure MD", logo: "/images/emr/curemd.jpg" },
+  { name: "Dr Chrono", logo: "/images/emr/drchrono.jpg" },
+  { name: "eClinical Works", logo: "/images/emr/eclinicalworks.jpg" },
+  { name: "Epic", logo: "/images/emr/epic.jpg" },
+  { name: "EZ Claim", logo: "/images/emr/ezclaim.jpg" },
+  { name: "GE Centricity", logo: "/images/emr/ge-centricity.jpg" },
+  { name: "Green Way", logo: "/images/emr/greenway.jpg" },
+  { name: "Medi Soft", logo: "/images/emr/medisoft.jpg" },
+  { name: "Medi Tech", logo: "/images/emr/meditech.jpg" },
+  { name: "Mod Med", logo: "/images/emr/modmed.jpg" },
+  { name: "Nextech", logo: "/images/emr/nextech.jpg" },
+  { name: "Next Gen", logo: "/images/emr/nextgen.jpg" },
+  { name: "Nue MD", logo: "/images/emr/nuemd.jpg" },
+  { name: "Office Ally", logo: "/images/emr/office-ally.jpg" },
+  { name: "Practice Fusion", logo: "/images/emr/practice-fusion.jpg" },
+  { name: "Practice Suite", logo: "/images/emr/practice-suite.jpg" },
+  { name: "Tebra", logo: "/images/emr/tebra.png" },
+  { name: "Telcor", logo: "/images/emr/telcor.jpg" },
+  { name: "Web PT", logo: "/images/emr/webpt.jpg" },
+  { name: "Xifin", logo: "/images/emr/xifin.jpg" },
 ];
 
 /**

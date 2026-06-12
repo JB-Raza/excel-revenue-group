@@ -1,5 +1,6 @@
 import { siteConfig } from "./site";
 import type { Service } from "./services";
+import { servedStates } from "./states";
 
 /** Absolute URL helper. */
 export function absoluteUrl(path = ""): string {
@@ -20,6 +21,18 @@ export function organizationSchema() {
     description: siteConfig.description,
     email: siteConfig.contact.email,
     telephone: siteConfig.contact.phone,
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "US",
+      streetAddress: siteConfig.contact.address,
+      addressLocality: siteConfig.contact.city || undefined,
+      addressRegion: siteConfig.contact.state || undefined,
+      postalCode: siteConfig.contact.zip || undefined,
+    },
+    areaServed: servedStates.map((s) => ({
+      "@type": "State",
+      name: s.name,
+    })),
     contactPoint: {
       "@type": "ContactPoint",
       telephone: siteConfig.contact.phone,

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Phone, Mail, MessageCircle, Clock, MapPin } from "lucide-react";
+import { Phone, Mail, MessageCircle, MapPin } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { FadeUp } from "@/components/animations/motion-primitives";
 import { PageHeader } from "@/components/sections/page-header";
 import { ContactForm } from "@/components/sections/contact-form";
+import { ContactMap } from "@/components/sections/contact-map";
 import { JsonLd } from "@/components/seo/json-ld";
 import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
 import { siteConfig, whatsappUrl, mailtoUrl } from "@/lib/site";
@@ -61,7 +62,6 @@ export default function ContactPage() {
 
       <Section variant="white">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-16">
-          {/* Left: contact channels */}
           <FadeUp className="flex flex-col gap-6">
             <div>
               <h2 className="font-heading text-2xl font-bold text-charcoal">
@@ -97,19 +97,14 @@ export default function ContactPage() {
               ))}
             </div>
 
-            <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border/60 bg-surface p-6">
-              <div className="flex items-center gap-3 text-sm text-charcoal">
-                <Clock className="h-5 w-5 shrink-0 text-gold" />
-                <span className="min-w-0 break-words">{siteConfig.contact.hours}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-charcoal">
-                <MapPin className="h-5 w-5 shrink-0 text-gold" />
-                <span className="min-w-0 break-words">{siteConfig.contact.address}</span>
-              </div>
+            <div className="flex items-start gap-3 rounded-[var(--radius-card)] border border-border/60 bg-surface p-6">
+              <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
+              <span className="min-w-0 break-words text-sm text-charcoal">
+                {siteConfig.contact.address}
+              </span>
             </div>
           </FadeUp>
 
-          {/* Right: form */}
           <FadeUp delay={0.1}>
             <div className="rounded-[var(--radius-card)] border border-border/60 bg-white p-6 shadow-[var(--shadow-card)] sm:p-10">
               <h2 className="font-heading text-2xl font-bold text-charcoal">
@@ -122,6 +117,18 @@ export default function ContactPage() {
             </div>
           </FadeUp>
         </div>
+      </Section>
+
+      <Section variant="surface">
+        <FadeUp className="flex flex-col gap-6">
+          <div>
+            <h2 className="font-heading text-2xl font-bold text-charcoal">Find Us</h2>
+            <p className="mt-2 text-gray-medium">
+              Our team serves practices nationwide from the United States.
+            </p>
+          </div>
+          <ContactMap />
+        </FadeUp>
       </Section>
     </>
   );

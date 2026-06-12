@@ -8,6 +8,7 @@ import { ContactCTA } from "@/components/sections/contact-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { services } from "@/lib/services";
 import { breadcrumbSchema } from "@/lib/seo";
+import { pageHeroImages } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -31,6 +32,7 @@ export default function ServicesPage() {
         title="Complete Revenue Cycle Management"
         description="A full suite of services designed to maximize your revenue, reduce denials, and free your team to focus on patient care."
         breadcrumbs={[{ name: "Home", href: "/" }, { name: "Services" }]}
+        image={pageHeroImages.services}
       />
 
       <Section variant="white">

@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { EmrStrip } from "@/components/sections/emr-strip";
+import { ProviderTrust } from "@/components/sections/provider-trust";
 import { ServicesOverview } from "@/components/sections/services-overview";
 import { Specialties } from "@/components/sections/specialties";
 import { WhyERG } from "@/components/sections/why-erg";
@@ -18,6 +19,7 @@ export default function Home() {
       <EmrStrip />
       <ServicesOverview />
       <Specialties />
+      <ProviderTrust />
       <WhyERG />
       <WhyOutsource />
       <RevenueCycle />

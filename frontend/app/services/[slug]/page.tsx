@@ -10,7 +10,9 @@ import { ContactCTA } from "@/components/sections/contact-cta";
 import { FadeUp, Stagger, StaggerItem } from "@/components/animations/motion-primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { services, getService, getRelatedServices } from "@/lib/services";
+import { siteConfig } from "@/lib/site";
 import { serviceSchema, faqSchema, breadcrumbSchema } from "@/lib/seo";
+import { getServiceHeroImage } from "@/lib/images";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -43,6 +45,7 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
 
   const related = getRelatedServices(slug);
   const Icon = service.icon;
+  const heroImage = getServiceHeroImage(slug);
 
   return (
     <>
@@ -67,6 +70,11 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
           { name: "Services", href: "/services" },
           { name: service.title },
         ]}
+        image={
+          heroImage
+            ? { ...heroImage, alt: `${service.title} — ${siteConfig.name}` }
+            : undefined
+        }
       />
 
       {/* Overview + what's included */}

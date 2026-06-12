@@ -40,8 +40,14 @@ export const siteConfig = {
     whatsapp: "15551234567",
     whatsappMessage:
       "Hello Excel Revenue Group, I'd like to learn more about your medical billing services.",
+    // TODO: replace with your full street address.
     address: "United States",
-    hours: "Mon–Fri, 9:00 AM – 6:00 PM (EST)",
+    city: "",
+    state: "",
+    zip: "",
+    // TODO: replace with your Google Maps embed URL for the pin above.
+    mapsEmbedUrl:
+      "https://maps.google.com/maps?q=United+States&hl=en&z=4&output=embed",
   },
 
   social: {
@@ -56,12 +62,20 @@ export const siteConfig = {
   web3FormsKey: "YOUR_WEB3FORMS_ACCESS_KEY",
 } as const;
 
-export const mainNav = [
+export type NavItem = {
+  label: string;
+  href: string;
+  dropdown?: "services" | "specialties";
+};
+
+export const mainNav: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
+  { label: "Services", href: "/services", dropdown: "services" },
+  { label: "Specialties", href: "/specialties", dropdown: "specialties" },
+  { label: "States", href: "/states" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
-] as const;
+];
 
 /** Helper: full WhatsApp click-to-chat URL. */
 export function whatsappUrl(): string {
