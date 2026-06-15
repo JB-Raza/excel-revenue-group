@@ -12,10 +12,34 @@
 const contactEmail =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "info@excelrevenuegroup.com";
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE ?? "";
-const contactPhoneHref =
-  process.env.NEXT_PUBLIC_CONTACT_PHONE_HREF ??
-  (contactPhone ? `tel:${contactPhone.replace(/\s/g, "")}` : "");
 const contactWhatsapp = process.env.NEXT_PUBLIC_CONTACT_WHATSAPP ?? "";
+const contactAddress =
+  process.env.NEXT_PUBLIC_CONTACT_ADDRESS ?? "United States";
+
+/** Ensures tel: links work — bare +923… becomes tel:+923… */
+function normalizeTelHref(href: string, phone: string): string {
+  let raw = (href.trim() || phone.replace(/\s/g, "")).replace(/^tel:/i, "");
+  if (!raw) return "";
+  return `tel:${raw}`;
+}
+
+const contactPhoneHref = normalizeTelHref(
+  process.env.NEXT_PUBLIC_CONTACT_PHONE_HREF ?? "",
+  contactPhone,
+);
+
+const mapsEmbedUrl =
+  process.env.NEXT_PUBLIC_CONTACT_MAP_EMBED_URL ??
+  `https://maps.google.com/maps?q=${encodeURIComponent(contactAddress)}&hl=en&z=15&output=embed`;
+
+function parseMapPinPercent(value: string | undefined, fallback: number): number {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(100, Math.max(0, n));
+}
+
+const mapPinX = parseMapPinPercent(process.env.NEXT_PUBLIC_CONTACT_MAP_PIN_X, 50);
+const mapPinY = parseMapPinPercent(process.env.NEXT_PUBLIC_CONTACT_MAP_PIN_Y, 50);
 
 export const siteConfig = {
   name: "Excel Revenue Group",
@@ -47,14 +71,14 @@ export const siteConfig = {
     whatsapp: contactWhatsapp,
     whatsappMessage:
       "Hello Excel Revenue Group, I'd like to learn more about your medical billing services.",
-    // TODO: replace with your full street address.
-    address: "United States",
+    address: contactAddress,
     city: "",
     state: "",
     zip: "",
-    // TODO: replace with your Google Maps embed URL for the pin above.
-    mapsEmbedUrl:
-      "https://maps.google.com/maps?q=United+States&hl=en&z=4&output=embed",
+    mapsEmbedUrl,
+    /** Pin overlay position on the contact map (%). Tune via env if needed. */
+    mapPinX,
+    mapPinY,
   },
 
   social: {

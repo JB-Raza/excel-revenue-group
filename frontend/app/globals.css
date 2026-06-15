@@ -152,6 +152,30 @@
   }
 }
 
+/* ===== Map location ripple (contact page) ===== */
+@keyframes erg-map-ripple {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.erg-map-ripple {
+  animation: erg-map-ripple 2.8s var(--ease-premium) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .erg-map-ripple {
+    animation: none;
+    opacity: 0.25;
+    transform: scale(1.4);
+  }
+}
+
 /* ===== Infinite marquee (testimonials) ===== */
 @keyframes erg-marquee {
   from {
