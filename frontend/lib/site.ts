@@ -4,7 +4,7 @@
  * PLACEHOLDERS to update before launch:
  *  - url:            final production domain (currently placeholder)
  *  - contact.*:      real phone / email / WhatsApp / address
- *  - web3FormsKey:   real Web3Forms access key (https://web3forms.com)
+ *  - NEXT_PUBLIC_WEB3FORMS_KEY in .env — Web3Forms access key (https://web3forms.com)
  *  - social.*:       real social profile URLs (or remove)
  */
 
@@ -58,8 +58,8 @@ export const siteConfig = {
     twitter: "",
   },
 
-  // TODO: get a free key at https://web3forms.com (used by the contact form).
-  web3FormsKey: "YOUR_WEB3FORMS_ACCESS_KEY",
+  // Contact form — set NEXT_PUBLIC_WEB3FORMS_KEY in .env (client-safe public key).
+  web3FormsKey: process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "",
 } as const;
 
 export type NavItem = {

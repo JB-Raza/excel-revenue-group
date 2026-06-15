@@ -17,8 +17,7 @@ export function ContactForm() {
   const [service, setService] = useState<string>("");
   const [serviceTouched, setServiceTouched] = useState(false);
 
-  const keyConfigured =
-    siteConfig.web3FormsKey && siteConfig.web3FormsKey !== "YOUR_WEB3FORMS_ACCESS_KEY";
+  const keyConfigured = Boolean(siteConfig.web3FormsKey?.trim());
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -100,8 +99,8 @@ export function ContactForm() {
       {!keyConfigured ? (
         <p className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-800">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          Setup note: add your Web3Forms access key in <code>lib/site.ts</code> to
-          enable form delivery.
+          Setup note: add <code>NEXT_PUBLIC_WEB3FORMS_KEY</code> to your{" "}
+          <code>.env</code> file to enable form delivery.
         </p>
       ) : null}
 
