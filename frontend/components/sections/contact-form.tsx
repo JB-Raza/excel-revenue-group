@@ -51,7 +51,10 @@ export function ContactForm() {
         setServiceTouched(false);
       } else {
         setStatus("error");
-        setError(data.message || "Something went wrong. Please try again.");
+        setError(
+          data.message ||
+            "Submission failed. Check your Web3Forms access key and try again.",
+        );
       }
     } catch {
       setStatus("error");
@@ -72,6 +75,13 @@ export function ContactForm() {
             {siteConfig.contact.phone}
           </a>
           .
+        </p>
+        <p className="text-xs text-gray-medium/90">
+          Form notifications are sent to the email verified in your Web3Forms
+          account (not necessarily the contact email shown on this site). If you
+          are testing, check Gmail&apos;s <strong>Promotions</strong> and{" "}
+          <strong>Updates</strong> tabs for mail from{" "}
+          <code className="text-[0.7rem]">@web3forms.com</code>.
         </p>
       </div>
     );

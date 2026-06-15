@@ -1,12 +1,21 @@
 /**
  * Central site configuration — single source of truth.
  *
- * PLACEHOLDERS to update before launch:
- *  - url:            final production domain (currently placeholder)
- *  - contact.*:      real phone / email / WhatsApp / address
- *  - NEXT_PUBLIC_WEB3FORMS_KEY in .env — Web3Forms access key (https://web3forms.com)
- *  - social.*:       real social profile URLs (or remove)
+ * Environment variables (.env):
+ *  - NEXT_PUBLIC_CONTACT_EMAIL, NEXT_PUBLIC_CONTACT_PHONE, etc. — shown on site
+ *  - NEXT_PUBLIC_WEB3FORMS_KEY — contact form (https://web3forms.com)
+ *    Form submissions are emailed to the address verified in your Web3Forms dashboard
+ *    when the access key was created (not controlled by CONTACT_EMAIL here).
+ *  - social.* below — real social profile URLs (or remove)
  */
+
+const contactEmail =
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "info@excelrevenuegroup.com";
+const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE ?? "";
+const contactPhoneHref =
+  process.env.NEXT_PUBLIC_CONTACT_PHONE_HREF ??
+  (contactPhone ? `tel:${contactPhone.replace(/\s/g, "")}` : "");
+const contactWhatsapp = process.env.NEXT_PUBLIC_CONTACT_WHATSAPP ?? "";
 
 export const siteConfig = {
   name: "Excel Revenue Group",
@@ -32,12 +41,10 @@ export const siteConfig = {
   ],
 
   contact: {
-    // TODO: replace with real values.
-    phone: "+1 (555) 123-4567",
-    phoneHref: "tel:+15551234567",
-    email: "info@excelrevenuegroup.com",
-    // WhatsApp number in international format, digits only, for wa.me links.
-    whatsapp: "15551234567",
+    phone: contactPhone,
+    phoneHref: contactPhoneHref,
+    email: contactEmail,
+    whatsapp: contactWhatsapp,
     whatsappMessage:
       "Hello Excel Revenue Group, I'd like to learn more about your medical billing services.",
     // TODO: replace with your full street address.
