@@ -7,15 +7,15 @@ import { PageHeader } from "@/components/sections/page-header";
 import { ContactCTA } from "@/components/sections/contact-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { services } from "@/lib/services";
-import { breadcrumbSchema } from "@/lib/seo";
+import { breadcrumbSchema, buildPageMetadata } from "@/lib/seo";
 import { pageHeroImages } from "@/lib/images";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Services",
   description:
     "Explore Excel Revenue Group's full range of medical billing and revenue cycle management services — from credentialing and eligibility to denial management and A/R recovery.",
-  alternates: { canonical: "/services" },
-};
+  path: "/services",
+});
 
 export default function ServicesPage() {
   return (

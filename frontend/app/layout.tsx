@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site";
+import { defaultOgImage } from "@/lib/seo";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -45,10 +46,10 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: "/logo.png",
-        width: 500,
-        height: 500,
-        alt: `${siteConfig.name} logo`,
+        url: defaultOgImage.url,
+        width: defaultOgImage.width,
+        height: defaultOgImage.height,
+        alt: defaultOgImage.alt,
       },
     ],
   },
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
-    images: ["/logo.png"],
+    images: [defaultOgImage.url],
   },
   robots: {
     index: true,

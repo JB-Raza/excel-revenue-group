@@ -27,6 +27,7 @@ export function PageHeader({
   image,
 }: PageHeaderProps) {
   const useCenterText = align === "center" && !image;
+  const hasImage = Boolean(image);
 
   return (
     <section
@@ -45,18 +46,17 @@ export function PageHeader({
             className={cn(
               image.fit === "contain"
                 ? "object-contain object-right object-center scale-110 md:scale-125"
-                : "object-cover object-center scale-105",
-              image.position,
+                : cn("object-cover object-center", image.position),
             )}
             priority
           />
-          <div className="absolute inset-0 bg-surface/10" />
+          <div className="absolute inset-0 bg-charcoal/35" />
           <div
             className={cn(
               "absolute inset-0",
               image.fit === "contain"
-                ? "bg-gradient-to-r from-surface/88 from-0% via-surface/45 via-32% to-transparent to-100%"
-                : "bg-gradient-to-r from-surface/85 from-0% via-surface/35 via-38% to-surface/5 to-100%",
+                ? "bg-gradient-to-r from-charcoal/62 from-0% via-charcoal/42 via-34% to-transparent to-100%"
+                : "bg-gradient-to-r from-charcoal/60 from-0% via-charcoal/42 via-40% to-charcoal/25 to-100%",
             )}
           />
         </div>
@@ -80,18 +80,27 @@ export function PageHeader({
             <nav
               aria-label="Breadcrumb"
               className={cn(
-                "flex items-center gap-1.5 text-sm text-gray-medium",
+                "flex items-center gap-1.5 text-sm",
+                hasImage ? "text-white/75" : "text-gray-medium",
                 useCenterText ? "justify-center" : "",
               )}
             >
               {breadcrumbs.map((crumb, i) => (
                 <span key={crumb.name} className="flex items-center gap-1.5">
                   {crumb.href ? (
-                    <Link href={crumb.href} className="transition-colors hover:text-gold">
+                    <Link
+                      href={crumb.href}
+                      className={cn(
+                        "transition-colors",
+                        hasImage ? "hover:text-gold-light" : "hover:text-gold",
+                      )}
+                    >
                       {crumb.name}
                     </Link>
                   ) : (
-                    <span className="text-charcoal">{crumb.name}</span>
+                    <span className={hasImage ? "text-white" : "text-charcoal"}>
+                      {crumb.name}
+                    </span>
                   )}
                   {i < breadcrumbs.length - 1 ? (
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -104,7 +113,8 @@ export function PageHeader({
           {eyebrow ? (
             <span
               className={cn(
-                "inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-gold",
+                "inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em]",
+                hasImage ? "text-gold-light" : "text-gold",
                 useCenterText ? "justify-center" : "",
               )}
             >
@@ -112,12 +122,24 @@ export function PageHeader({
             </span>
           ) : null}
 
-          <h1 className="font-heading text-5xl font-extrabold leading-tight text-charcoal">
+          <h1
+            className={cn(
+              "font-heading text-5xl font-extrabold leading-tight",
+              hasImage ? "text-white" : "text-charcoal",
+            )}
+          >
             {title}
           </h1>
 
           {description ? (
-            <p className="text-lg leading-relaxed text-gray-medium">{description}</p>
+            <p
+              className={cn(
+                "text-lg leading-relaxed",
+                hasImage ? "text-white/85" : "text-gray-medium",
+              )}
+            >
+              {description}
+            </p>
           ) : null}
         </FadeUp>
       </Container>

@@ -1,114 +1,5 @@
-import type { LucideIcon } from "lucide-react";
-import {
-  Heart,
-  Bone,
-  Brain,
-  Stethoscope,
-  Baby,
-  Eye,
-  Activity,
-  Syringe,
-  Scissors,
-  Microscope,
-  Pill,
-  Hand,
-} from "lucide-react";
-
-export type Specialty = {
-  name: string;
-  slug: string;
-  icon: LucideIcon;
-  /** PNG icon path when available; Lucide used as fallback. */
-  image?: string;
-  description: string;
-};
-
-/** Specialties ERG provides billing for. */
-export const specialties: Specialty[] = [
-  {
-    name: "Cardiology",
-    slug: "cardiology",
-    icon: Heart,
-    image: "/images/specialties/cardiology.png",
-    description: "Complex cardiac coding, cath lab billing, and payer-specific cardiology rules.",
-  },
-  {
-    name: "Orthopedics",
-    slug: "orthopedics",
-    icon: Bone,
-    image: "/images/specialties/orthopedics.png",
-    description: "Surgical and non-surgical ortho billing with modifier accuracy and global period tracking.",
-  },
-  {
-    name: "Behavioral Health",
-    slug: "behavioral-health",
-    icon: Brain,
-    image: "/images/specialties/behavioral-health.png",
-    description: "Mental health, psychiatry, and substance-use billing with session-level precision.",
-  },
-  {
-    name: "Internal Medicine",
-    slug: "internal-medicine",
-    icon: Stethoscope,
-    image: "/images/specialties/internal-medicine.png",
-    description: "High-volume primary and internal medicine with chronic care and E/M optimization.",
-  },
-  {
-    name: "Pediatrics",
-    slug: "pediatrics",
-    icon: Baby,
-    image: "/images/specialties/pediatrics.png",
-    description: "Well-child visits, immunizations, and pediatric-specific payer requirements.",
-  },
-  {
-    name: "Ophthalmology",
-    slug: "ophthalmology",
-    icon: Eye,
-    image: "/images/specialties/ophthalmology.png",
-    description: "Surgical and medical eye care billing including injectables and ASC claims.",
-  },
-  {
-    name: "Family Medicine",
-    slug: "family-medicine",
-    icon: Activity,
-    image: "/images/specialties/family-medicine.png",
-    description: "Full-scope family practice billing from preventive care to minor procedures.",
-  },
-  {
-    name: "Pain Management",
-    slug: "pain-management",
-    icon: Syringe,
-    image: "/images/specialties/pain-management.png",
-    description: "Interventional pain procedures, injections, and prior-authorization workflows.",
-  },
-  {
-    name: "General Surgery",
-    slug: "general-surgery",
-    icon: Scissors,
-    image: "/images/specialties/general-surgery.png",
-    description: "Surgical billing with correct global periods, implants, and assistant surgeon rules.",
-  },
-  {
-    name: "Laboratory & Pathology",
-    slug: "laboratory-pathology",
-    icon: Microscope,
-    image: "/images/specialties/laboratory-pathology.png",
-    description: "Lab requisitions, panel coding, and pathology with compliance-focused claim scrubbing.",
-  },
-  {
-    name: "Pharmacy",
-    slug: "pharmacy",
-    icon: Pill,
-    description: "Pharmacy billing, dispensing fees, and specialty drug claim management.",
-  },
-  {
-    name: "Chiropractic",
-    slug: "chiropractic",
-    icon: Hand,
-    image: "/images/specialties/chiropractic.png",
-    description: "Chiropractic care plans, visit limits, and payer-specific chiropractic policies.",
-  },
-];
+export type { Specialty } from "./specialties";
+export { specialties, getSpecialty, getRelatedSpecialties } from "./specialties";
 
 export type EmrSystem = {
   name: string;
@@ -141,6 +32,35 @@ export const emrSystems: EmrSystem[] = [
   { name: "Telcor", logo: "/images/emr/telcor.jpg" },
   { name: "Web PT", logo: "/images/emr/webpt.jpg" },
   { name: "Xifin", logo: "/images/emr/xifin.jpg" },
+];
+
+export type Payer = {
+  name: string;
+  logo: string;
+};
+
+/** Insurance payers ERG bills and collects from. */
+export const payers: Payer[] = [
+  { name: "Medicare", logo: "/images/payers/medicare.jpg" },
+  { name: "United Healthcare", logo: "/images/payers/united-healthcare.jpg" },
+  { name: "Blue Cross Blue Shield", logo: "/images/payers/blue-cross-blue-shield.jpg" },
+  { name: "Aetna", logo: "/images/payers/aetna.jpg" },
+  { name: "Cigna", logo: "/images/payers/cigna.jpg" },
+  { name: "Humana", logo: "/images/payers/humana.jpg" },
+  { name: "Anthem", logo: "/images/payers/anthem.jpg" },
+  { name: "Kaiser Permanente", logo: "/images/payers/kaiser.jpg" },
+  { name: "Highmark", logo: "/images/payers/highmark.jpg" },
+  { name: "CVS Aetna", logo: "/images/payers/cvs-aetna.jpg" },
+  { name: "Centene", logo: "/images/payers/centene.jpg" },
+  { name: "Molina Healthcare", logo: "/images/payers/molina.jpg" },
+  { name: "Ambetter", logo: "/images/payers/ambetter.jpg" },
+  { name: "CareSource", logo: "/images/payers/caresource.jpg" },
+  { name: "CareFirst", logo: "/images/payers/carefirst.jpg" },
+  { name: "HCSC", logo: "/images/payers/hcsc.jpg" },
+  { name: "Independence Blue Cross", logo: "/images/payers/independence.jpg" },
+  { name: "Allied Benefit", logo: "/images/payers/allied.jpg" },
+  { name: "AARP", logo: "/images/payers/aarp.jpg" },
+  { name: "NALC Health Benefit Plan", logo: "/images/payers/nalc.jpg" },
 ];
 
 /**

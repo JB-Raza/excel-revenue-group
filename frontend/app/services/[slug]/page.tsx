@@ -5,14 +5,15 @@ import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Accordion } from "@/components/ui/accordion";
+import { RoundedVisual } from "@/components/ui/rounded-visual";
 import { PageHeader } from "@/components/sections/page-header";
 import { ContactCTA } from "@/components/sections/contact-cta";
 import { FadeUp, Stagger, StaggerItem } from "@/components/animations/motion-primitives";
 import { JsonLd } from "@/components/seo/json-ld";
 import { services, getService, getRelatedServices } from "@/lib/services";
 import { siteConfig } from "@/lib/site";
-import { serviceSchema, faqSchema, breadcrumbSchema } from "@/lib/seo";
-import { getServiceHeroImage } from "@/lib/images";
+import { serviceSchema, faqSchema, breadcrumbSchema, buildPageMetadata } from "@/lib/seo";
+import { getServiceHeroImage, getServiceImage } from "@/lib/images";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -24,18 +25,12 @@ export async function generateMetadata(
   const { slug } = await props.params;
   const service = getService(slug);
   if (!service) return {};
-  return {
+  return buildPageMetadata({
     title: service.metaTitle,
     description: service.metaDescription,
+    path: `/services/${service.slug}`,
     keywords: service.keywords,
-    alternates: { canonical: `/services/${service.slug}` },
-    openGraph: {
-      title: service.metaTitle,
-      description: service.metaDescription,
-      url: `/services/${service.slug}`,
-      type: "website",
-    },
-  };
+  });
 }
 
 export default async function ServicePage(props: PageProps<"/services/[slug]">) {
@@ -46,6 +41,10 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
   const related = getRelatedServices(slug);
   const Icon = service.icon;
   const heroImage = getServiceHeroImage(slug);
+  const serviceImage = getServiceImage(slug);
+  const showInlineImage = Boolean(
+    serviceImage && serviceImage !== heroImage?.src,
+  );
 
   return (
     <>
@@ -106,9 +105,19 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
             </ul>
           </FadeUp>
 
-          {/* What's included card */}
-          <FadeUp delay={0.1}>
-            <div className="sticky top-28 rounded-[var(--radius-card)] border border-border/60 bg-surface p-8 shadow-[var(--shadow-soft)]">
+          {/* What's included + optional in-page service visual */}
+          <div className="flex flex-col gap-6">
+            {showInlineImage && serviceImage ? (
+              <RoundedVisual
+                src={serviceImage}
+                alt={`${service.title} — ${siteConfig.name}`}
+                aspect="4/5"
+                className="mx-auto max-w-sm lg:mx-0"
+                priority
+              />
+            ) : null}
+            <FadeUp delay={showInlineImage ? 0.1 : 0}>
+            <div className="lg:sticky lg:top-28 rounded-[var(--radius-card)] border border-border/60 bg-surface p-8 shadow-[var(--shadow-soft)]">
               <h3 className="font-heading text-lg font-bold text-charcoal">
                 What&apos;s Included
               </h3>
@@ -125,7 +134,8 @@ export default async function ServicePage(props: PageProps<"/services/[slug]">) 
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
-          </FadeUp>
+            </FadeUp>
+          </div>
         </div>
       </Section>
 

@@ -5,17 +5,17 @@ import { Stagger, StaggerItem } from "@/components/animations/motion-primitives"
 import { PageHeader } from "@/components/sections/page-header";
 import { ContactCTA } from "@/components/sections/contact-cta";
 import { JsonLd } from "@/components/seo/json-ld";
-import { breadcrumbSchema, organizationSchema } from "@/lib/seo";
+import { breadcrumbSchema, organizationSchema, buildPageMetadata } from "@/lib/seo";
 import { servedStates } from "@/lib/states";
 import { pageHeroImages } from "@/lib/images";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "States We Serve",
   description:
     "Excel Revenue Group provides nationwide medical billing and revenue cycle management services to healthcare practices across the United States.",
-  alternates: { canonical: "/states" },
-};
+  path: "/states",
+});
 
 export default function StatesPage() {
   return (

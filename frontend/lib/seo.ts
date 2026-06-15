@@ -1,6 +1,55 @@
+import type { Metadata } from "next";
 import { siteConfig } from "./site";
 import type { Service } from "./services";
 import { servedStates } from "./states";
+import { stockImages } from "./stock-images";
+
+/** Default social share image. */
+export const defaultOgImage = {
+  url: stockImages.ogDefault,
+  width: 1920,
+  height: 1080,
+  alt: `${siteConfig.name} — medical billing and revenue cycle management`,
+};
+
+type PageMetadataOptions = {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+  imageAlt?: string;
+  keywords?: string[];
+};
+
+/** Consistent page metadata with Open Graph and Twitter cards. */
+export function buildPageMetadata({
+  title,
+  description,
+  path,
+  image = defaultOgImage.url,
+  imageAlt = defaultOgImage.alt,
+  keywords,
+}: PageMetadataOptions): Metadata {
+  return {
+    title,
+    description,
+    keywords,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: path,
+      type: "website",
+      images: [{ url: image, width: defaultOgImage.width, height: defaultOgImage.height, alt: imageAlt }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
+}
 
 /** Absolute URL helper. */
 export function absoluteUrl(path = ""): string {

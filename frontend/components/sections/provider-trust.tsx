@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { RoundedVisual } from "@/components/ui/rounded-visual";
 import { Stagger, StaggerItem } from "@/components/animations/motion-primitives";
 import { teamMembers } from "@/lib/images";
 
@@ -21,15 +21,15 @@ export function ProviderTrust() {
         {teamMembers.map((member) => (
           <StaggerItem key={member.label}>
             <div className="group flex flex-col items-center gap-4 text-center">
-              <div className="relative aspect-[3/4] w-full max-w-[10.5rem] overflow-hidden rounded-[var(--radius-xl)] border border-border/60 bg-white shadow-[var(--shadow-soft)] transition-all duration-500 ease-[var(--ease-premium)] group-hover:-translate-y-1.5 group-hover:shadow-[var(--shadow-card)] sm:max-w-[12rem] lg:max-w-[13.5rem]">
-                <Image
-                  src={member.src}
-                  alt={member.alt}
-                  fill
-                  sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 13.5rem"
-                  className="object-cover object-top transition-transform duration-500 ease-[var(--ease-premium)] group-hover:scale-105"
-                />
-              </div>
+              <RoundedVisual
+                src={member.src}
+                alt={member.alt}
+                aspect="3/4"
+                fit="cover"
+                className="max-w-[10.5rem] sm:max-w-[12rem] lg:max-w-[13.5rem]"
+                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 13.5rem"
+                imageClassName="group-hover:scale-[1.02]"
+              />
               <span className="text-sm font-semibold text-charcoal">{member.label}</span>
             </div>
           </StaggerItem>

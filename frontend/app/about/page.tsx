@@ -8,31 +8,31 @@ import { PageHeader } from "@/components/sections/page-header";
 import { CeoPortrait } from "@/components/sections/ceo-portrait";
 import { ContactCTA } from "@/components/sections/contact-cta";
 import { JsonLd } from "@/components/seo/json-ld";
-import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
+import { organizationSchema, breadcrumbSchema, buildPageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 import { pageHeroImages } from "@/lib/images";
-
-// TODO: replace with the real CEO details, and add the photo at
-// public/images/ceo.jpg (a 4:5 portrait works best).
 const ceo = {
-  name: "[CEO Name]",
-  role: "Founder & Chief Executive Officer",
-  initials: "EC",
-  photo: "/images/ceo.jpg",
+  name: "Asif Raza",
+  role: "Founder & Chief Executive Officer (CEO)",
+  initials: "AR",
+  photo: "/ceo.jpeg",
   bio: [
-    "With years of hands-on experience in medical billing and revenue cycle management, our CEO founded Excel Revenue Group on a simple belief: providers deserve a billing partner that treats their revenue as carefully as they treat their patients.",
-    "Under this leadership, the team has built a practice rooted in accuracy, transparency, and accountability — helping practices of every size reduce denials, accelerate reimbursements, and gain full visibility into their financial health.",
+    "My journey in U.S. Medical Billing began with hands-on experience across the full Revenue Cycle Management (RCM) process, where I worked closely with healthcare providers to optimize financial performance, reduce claim denials, and improve reimbursement outcomes. While the experience was invaluable, I envisioned something greater: a company built on accountability, precision, transparency, and measurable results.",
+    "Driven by that vision, I founded ERG, a specialized U.S. Medical Billing and Revenue Cycle Management company dedicated to helping medical practices strengthen their financial health through accurate, HIPAA-compliant, and performance-focused billing solutions. As Founder and CEO, I remain actively involved in strategic planning, operational oversight, and quality assurance to ensure every client receives the highest standard of service.",
+    "Throughout my career, I have developed a deep understanding of the challenges healthcare providers face, including claim rejections, payment delays, accounts receivable backlogs, payer-specific complexities, and evolving regulatory requirements. This experience has enabled me to build efficient revenue cycle strategies that improve collections, enhance cash flow, and support long-term practice growth.",
+    "ERG is currently in an exciting growth phase, working closely with healthcare organizations to deliver customized billing solutions, streamlined workflows, and consistent financial outcomes. Our hands-on approach allows us to build strong partnerships while maintaining the flexibility and attention to detail providers expect from a trusted revenue cycle partner.",
+    "My mission is to help physicians and healthcare organizations focus on what matters most: delivering exceptional patient care, while we manage the complexities of medical billing with accuracy, integrity, and professionalism.",
   ],
   quote:
-    "Our success is measured by one thing — the revenue we help our clients capture and keep.",
+    "My goal is to establish ERG as a leading and trusted Revenue Cycle Management partner for healthcare providers across the United States, empowering practices to remain financially strong, operationally efficient, and positioned for sustainable growth.",
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "About Us",
   description:
     "Excel Revenue Group is a premium medical billing and revenue cycle management partner focused on increasing provider revenue through accuracy, transparency, and true partnership.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 const values = [
   { icon: ShieldCheck, title: "Integrity", description: "We protect your revenue and your reputation with compliant, ethical practices." },
@@ -67,6 +67,45 @@ export default function AboutPage() {
         breadcrumbs={[{ name: "Home", href: "/" }, { name: "About" }]}
         image={pageHeroImages.about}
       />
+
+      {/* CEO / Leadership */}
+      <Section variant="surface">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
+          <FadeUp>
+            <CeoPortrait
+              src={ceo.photo}
+              name={ceo.name}
+              fallbackInitials={ceo.initials}
+            />
+          </FadeUp>
+
+          <FadeUp delay={0.1} className="flex flex-col gap-5">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+              <span className="h-px w-6 bg-gold" aria-hidden />
+              Leadership
+            </span>
+            <div>
+              <h2 className="font-heading text-4xl font-bold text-charcoal">
+                {ceo.name}
+              </h2>
+              <p className="mt-1 text-base font-medium text-gold-deep">{ceo.role}</p>
+            </div>
+
+            {ceo.bio.map((paragraph) => (
+              <p key={paragraph} className="text-base leading-relaxed text-gray-medium">
+                {paragraph}
+              </p>
+            ))}
+
+            <blockquote className="relative mt-2 rounded-[var(--radius-card)] border border-border/60 bg-white p-6 shadow-[var(--shadow-soft)]">
+              <Quote className="absolute -top-3 left-6 h-7 w-7 text-gold" aria-hidden />
+              <p className="font-heading text-lg font-medium italic text-charcoal">
+                {ceo.quote}
+              </p>
+            </blockquote>
+          </FadeUp>
+        </div>
+      </Section>
 
       {/* Overview */}
       <Section variant="white">
@@ -159,45 +198,6 @@ export default function AboutPage() {
             </StaggerItem>
           ))}
         </Stagger>
-      </Section>
-
-      {/* CEO / Leadership */}
-      <Section variant="surface">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-16">
-          <FadeUp>
-            <CeoPortrait
-              src={ceo.photo}
-              name={ceo.name}
-              fallbackInitials={ceo.initials}
-            />
-          </FadeUp>
-
-          <FadeUp delay={0.1} className="flex flex-col gap-5">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
-              <span className="h-px w-6 bg-gold" aria-hidden />
-              Leadership
-            </span>
-            <div>
-              <h2 className="font-heading text-4xl font-bold text-charcoal">
-                {ceo.name}
-              </h2>
-              <p className="mt-1 text-base font-medium text-gold-deep">{ceo.role}</p>
-            </div>
-
-            {ceo.bio.map((paragraph) => (
-              <p key={paragraph} className="text-base leading-relaxed text-gray-medium">
-                {paragraph}
-              </p>
-            ))}
-
-            <blockquote className="relative mt-2 rounded-[var(--radius-card)] border border-border/60 bg-white p-6 shadow-[var(--shadow-soft)]">
-              <Quote className="absolute -top-3 left-6 h-7 w-7 text-gold" aria-hidden />
-              <p className="font-heading text-lg font-medium italic text-charcoal">
-                {ceo.quote}
-              </p>
-            </blockquote>
-          </FadeUp>
-        </div>
       </Section>
 
       {/* Why ERG strip */}

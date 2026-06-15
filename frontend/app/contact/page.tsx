@@ -6,15 +6,16 @@ import { PageHeader } from "@/components/sections/page-header";
 import { ContactForm } from "@/components/sections/contact-form";
 import { ContactMap } from "@/components/sections/contact-map";
 import { JsonLd } from "@/components/seo/json-ld";
-import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
+import { organizationSchema, breadcrumbSchema, buildPageMetadata } from "@/lib/seo";
+import { pageHeroImages } from "@/lib/images";
 import { siteConfig, whatsappUrl, mailtoUrl } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Contact Us",
   description:
     "Get in touch with Excel Revenue Group. Call, email, or message us on WhatsApp, or request a free consultation to learn how we can grow your revenue.",
-  alternates: { canonical: "/contact" },
-};
+  path: "/contact",
+});
 
 const channels = [
   {
@@ -58,6 +59,7 @@ export default function ContactPage() {
         title="Let's Talk About Your Revenue"
         description="Book a free, no-obligation consultation. Tell us about your practice and we'll show you where you could be capturing more revenue."
         breadcrumbs={[{ name: "Home", href: "/" }, { name: "Contact" }]}
+        image={pageHeroImages.contact}
       />
 
       <Section variant="white">

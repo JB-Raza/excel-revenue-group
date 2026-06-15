@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Link from "next/link";
 import { Section } from "@/components/ui/section";
-import { Stagger, StaggerItem } from "@/components/animations/motion-primitives";
+import { FadeUp } from "@/components/animations/motion-primitives";
 import { PageHeader } from "@/components/sections/page-header";
 import { ContactCTA } from "@/components/sections/contact-cta";
+import { SpecialtyGrid } from "@/components/sections/specialty-card";
 import { JsonLd } from "@/components/seo/json-ld";
-import { breadcrumbSchema } from "@/lib/seo";
-import { specialties } from "@/lib/content";
+import { breadcrumbSchema, buildPageMetadata } from "@/lib/seo";
+import { specialties } from "@/lib/specialties";
+import { pageHeroImages } from "@/lib/images";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Medical Specialties We Serve",
   description:
     "Excel Revenue Group provides specialty-specific medical billing for cardiology, orthopedics, behavioral health, pediatrics, surgery, labs, and more.",
-  alternates: { canonical: "/specialties" },
-};
+  path: "/specialties",
+});
 
 export default function SpecialtiesPage() {
   return (
@@ -30,36 +32,29 @@ export default function SpecialtiesPage() {
         title="Billing Expertise for Every Discipline"
         description="Specialty-specific coders, modifiers, and payer rules — matched to your practice, never one-size-fits-all."
         breadcrumbs={[{ name: "Home", href: "/" }, { name: "Specialties" }]}
+        image={pageHeroImages.specialties}
       />
 
       <Section variant="white">
-        <Stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {specialties.map(({ name, slug, icon: Icon, image, description }) => (
-            <StaggerItem key={slug}>
-              <article
-                id={slug}
-                className="group flex h-full scroll-mt-28 flex-col gap-4 rounded-[var(--radius-card)] border border-border/60 bg-white p-7 shadow-[var(--shadow-soft)] transition-all duration-300 ease-[var(--ease-premium)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
-              >
-                <span className="grid h-14 w-14 place-items-center overflow-hidden rounded-xl bg-gold-soft/45 transition-all duration-300 ease-[var(--ease-premium)] group-hover:bg-charcoal">
-                  {image ? (
-                    <Image
-                      src={image}
-                      alt=""
-                      width={56}
-                      height={56}
-                      className="h-9 w-9 object-contain brightness-0 opacity-80 transition-all duration-300 ease-[var(--ease-premium)] group-hover:opacity-100 group-hover:invert"
-                      aria-hidden
-                    />
-                  ) : (
-                    <Icon className="h-7 w-7 text-gold-deep transition-colors duration-300 group-hover:text-white" />
-                  )}
-                </span>
-                <h2 className="font-heading text-xl font-bold text-charcoal">{name}</h2>
-                <p className="text-sm leading-relaxed text-gray-medium">{description}</p>
-              </article>
-            </StaggerItem>
-          ))}
-        </Stagger>
+        <FadeUp className="mx-auto mb-12 max-w-2xl text-center">
+          <p className="text-base leading-relaxed text-gray-medium">
+            Select your specialty to see how ERG handles your codes, denials, and
+            payer rules — with dedicated billing teams who know your field.
+          </p>
+        </FadeUp>
+        <SpecialtyGrid items={specialties} />
+      </Section>
+
+      <Section variant="surface">
+        <FadeUp className="mx-auto max-w-2xl text-center">
+          <p className="text-base text-gray-medium">
+            Don&apos;t see your specialty?{" "}
+            <Link href="/contact" className="font-semibold text-gold hover:underline">
+              Talk to us
+            </Link>{" "}
+            — we bill across many disciplines and can tailor a team to your practice.
+          </p>
+        </FadeUp>
       </Section>
 
       <ContactCTA />

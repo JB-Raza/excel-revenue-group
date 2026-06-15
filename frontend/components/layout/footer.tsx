@@ -160,7 +160,15 @@ export function Footer() {
           <p>
             © {year} {siteConfig.name}. All rights reserved.
           </p>
-          <p>{siteConfig.tagline}</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <Link href="/privacy" className="transition-colors hover:text-gold">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-gold">
+              Terms of Use
+            </Link>
+            <span className="hidden sm:inline">{siteConfig.tagline}</span>
+          </div>
         </Container>
       </div>
     </footer>

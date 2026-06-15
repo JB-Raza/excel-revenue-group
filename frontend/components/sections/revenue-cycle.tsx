@@ -80,7 +80,7 @@ export function RevenueCycle() {
         <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-stretch">
           <div className="relative mx-auto hidden w-full max-w-md lg:block">
             <div className="sticky top-[calc(7rem+10px)]">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] border border-white/10 bg-white/5 shadow-[var(--shadow-card)]">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-white/10 via-white/5 to-gold/10 ring-1 ring-white/15 shadow-[var(--shadow-card)]">
                 <motion.div
                   className="absolute inset-0"
                   initial={
@@ -97,7 +97,7 @@ export function RevenueCycle() {
                     alt="Revenue cycle management process overview"
                     fill
                     sizes="28rem"
-                    className="object-contain p-4"
+                    className="object-contain p-3"
                   />
                 </motion.div>
               </div>

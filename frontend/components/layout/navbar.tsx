@@ -8,7 +8,7 @@ import { Menu, X, CalendarCheck, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mainNav, type NavItem } from "@/lib/site";
 import { services } from "@/lib/services";
-import { specialties } from "@/lib/content";
+import { specialties } from "@/lib/specialties";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
@@ -56,6 +56,17 @@ export function Navbar() {
     closeTimer.current = setTimeout(() => setOpenDropdown(null), 120);
   };
 
+  const closeDropdown = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenDropdown(null);
+  };
+
+  useEffect(() => {
+    setOpenDropdown(null);
+    setOpen(false);
+    setMobileExpanded(null);
+  }, [pathname]);
+
   return (
     <header
       className={cn(
@@ -81,6 +92,7 @@ export function Navbar() {
                 >
                   <Link
                     href={item.href}
+                    onClick={closeDropdown}
                     aria-expanded={isOpen}
                     className={cn(
                       "relative flex items-center gap-1 text-[0.9375rem] font-medium transition-colors hover:text-gold",
@@ -115,6 +127,7 @@ export function Navbar() {
                           <NavDropdownPanel
                             footerHref="/services"
                             footerLabel="View all services"
+                            onNavigate={closeDropdown}
                           >
                             {services.map((service) => (
                               <NavDropdownItem
@@ -123,6 +136,7 @@ export function Navbar() {
                                 label={service.title}
                                 description={service.shortDescription}
                                 icon={service.icon}
+                                onNavigate={closeDropdown}
                               />
                             ))}
                           </NavDropdownPanel>
@@ -130,14 +144,16 @@ export function Navbar() {
                           <NavDropdownPanel
                             footerHref="/specialties"
                             footerLabel="View all specialties"
+                            onNavigate={closeDropdown}
                           >
                             {specialties.map((specialty) => (
                               <NavDropdownItem
                                 key={specialty.slug}
-                                href={`/specialties#${specialty.slug}`}
+                                href={`/specialties/${specialty.slug}`}
                                 label={specialty.name}
                                 icon={specialty.icon}
                                 image={specialty.image}
+                                onNavigate={closeDropdown}
                               />
                             ))}
                           </NavDropdownPanel>
@@ -247,7 +263,7 @@ export function Navbar() {
                       : specialties.map((specialty) => (
                           <Link
                             key={specialty.slug}
-                            href={`/specialties#${specialty.slug}`}
+                            href={`/specialties/${specialty.slug}`}
                             onClick={() => setOpen(false)}
                             className="block rounded-lg px-3 py-2.5 text-sm text-gray-medium transition-colors hover:bg-surface hover:text-gold"
                           >

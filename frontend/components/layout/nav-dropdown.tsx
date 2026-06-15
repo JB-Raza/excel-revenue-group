@@ -19,6 +19,7 @@ type NavDropdownItemProps = {
   description?: string;
   icon?: LucideIcon;
   image?: string;
+  onNavigate?: () => void;
 };
 
 export function NavDropdownItem({
@@ -27,10 +28,12 @@ export function NavDropdownItem({
   description,
   icon: Icon,
   image,
+  onNavigate,
 }: NavDropdownItemProps) {
   return (
     <Link
       href={href}
+      onClick={onNavigate}
       className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface"
     >
       <span className={iconBoxClass}>
@@ -63,18 +66,21 @@ type NavDropdownPanelProps = {
   children: ReactNode;
   footerHref: string;
   footerLabel: string;
+  onNavigate?: () => void;
 };
 
 export function NavDropdownPanel({
   children,
   footerHref,
   footerLabel,
+  onNavigate,
 }: NavDropdownPanelProps) {
   return (
     <div className="overflow-hidden rounded-[var(--radius-card)] border border-border/70 bg-white shadow-[var(--shadow-card)]">
       <div className="grid grid-cols-2 gap-1 p-3">{children}</div>
       <Link
         href={footerHref}
+        onClick={onNavigate}
         className="flex items-center justify-between border-t border-border/60 bg-surface px-6 py-4 text-sm font-semibold text-charcoal transition-colors hover:text-gold"
       >
         {footerLabel}
