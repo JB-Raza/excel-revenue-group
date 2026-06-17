@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { useState, type FormEvent } from "react";
 import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { siteConfig } from "@/lib/site";
@@ -11,30 +12,46 @@ type Status = "idle" | "submitting" | "success" | "error";
 const inputClass =
   "w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-charcoal placeholder:text-gray-medium/70 transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30";
 
+function getCaptchaToken(form: HTMLFormElement): string {
+  return (
+    form.querySelector<HTMLTextAreaElement>('textarea[name="h-captcha-response"]')
+      ?.value ?? ""
+  );
+}
+
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string>("");
   const [service, setService] = useState<string>("");
   const [serviceTouched, setServiceTouched] = useState(false);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const keyConfigured = Boolean(siteConfig.web3FormsKey?.trim());
+
+  function resetCaptcha() {
+    setCaptchaKey((k) => k + 1);
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // The custom select isn't a native required field, so validate it here.
     if (!service) {
       setServiceTouched(true);
+      return;
+    }
+
+    const form = e.currentTarget;
+    const captchaToken = getCaptchaToken(form);
+    if (!captchaToken) {
+      setStatus("error");
+      setError("Please complete the captcha verification.");
       return;
     }
 
     setStatus("submitting");
     setError("");
 
-    const form = e.currentTarget;
     const formData = new FormData(form);
-
-    // Make the email subject reflect the selected service for easy triage.
     formData.set("subject", `New consultation request — ${service}`);
 
     try {
@@ -49,8 +66,10 @@ export function ContactForm() {
         form.reset();
         setService("");
         setServiceTouched(false);
+        resetCaptcha();
       } else {
         setStatus("error");
+        resetCaptcha();
         setError(
           data.message ||
             "Submission failed. Check your Web3Forms access key and try again.",
@@ -58,6 +77,7 @@ export function ContactForm() {
       }
     } catch {
       setStatus("error");
+      resetCaptcha();
       setError("Network error. Please try again or contact us directly.");
     }
   }
@@ -76,142 +96,149 @@ export function ContactForm() {
           </a>
           .
         </p>
-        <p className="text-xs text-gray-medium/90">
-          Form notifications are sent to the email verified in your Web3Forms
-          account (not necessarily the contact email shown on this site). If you
-          are testing, check Gmail&apos;s <strong>Promotions</strong> and{" "}
-          <strong>Updates</strong> tabs for mail from{" "}
-          <code className="text-[0.7rem]">@web3forms.com</code>.
-        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {/* Web3Forms access key */}
-      <input type="hidden" name="access_key" value={siteConfig.web3FormsKey} />
-      <input
-        type="hidden"
-        name="subject"
-        value={`New consultation request — ${siteConfig.name}`}
-      />
-      <input type="hidden" name="from_name" value={siteConfig.name} />
-      {/* Honeypot anti-spam field */}
-      <input
-        type="checkbox"
-        name="botcheck"
-        tabIndex={-1}
-        className="hidden"
-        aria-hidden
+    <>
+      <Script
+        src="https://web3forms.com/client/script.js"
+        strategy="afterInteractive"
       />
 
-      {!keyConfigured ? (
-        <p className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          Setup note: add <code>NEXT_PUBLIC_WEB3FORMS_KEY</code> to your{" "}
-          <code>.env</code> file to enable form delivery.
-        </p>
-      ) : null}
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="text-sm font-medium text-charcoal">
-            Full name <span className="text-gold">*</span>
-          </label>
-          <input id="name" name="name" required className={inputClass} placeholder="Jane Doe" />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="email" className="text-sm font-medium text-charcoal">
-            Email <span className="text-gold">*</span>
-          </label>
-          <input id="email" name="email" type="email" required className={inputClass} placeholder="jane@practice.com" />
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="phone" className="text-sm font-medium text-charcoal">
-            Phone
-          </label>
-          <input id="phone" name="phone" type="tel" className={inputClass} placeholder="(555) 123-4567" />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="practice" className="text-sm font-medium text-charcoal">
-            Practice / Specialty
-          </label>
-          <input id="practice" name="practice" className={inputClass} placeholder="Family Medicine" />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <span id="service-label" className="text-sm font-medium text-charcoal">
-          Service of interest <span className="text-gold">*</span>
-        </span>
-        <input type="hidden" name="service" value={service} />
-        <Select
-          id="service"
-          labelId="service-label"
-          options={serviceOptions}
-          value={service}
-          onChange={(v) => {
-            setService(v);
-            setServiceTouched(true);
-          }}
-          placeholder="Select a service…"
-          invalid={serviceTouched}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input type="hidden" name="access_key" value={siteConfig.web3FormsKey} />
+        <input
+          type="hidden"
+          name="subject"
+          value={`New consultation request — ${siteConfig.name}`}
         />
-        {serviceTouched && !service ? (
-          <p className="flex items-center gap-1.5 text-xs text-red-600">
-            <AlertCircle className="h-3.5 w-3.5" />
-            Please select a service.
+        <input type="hidden" name="from_name" value={siteConfig.name} />
+        <input
+          type="checkbox"
+          name="botcheck"
+          tabIndex={-1}
+          className="hidden"
+          aria-hidden
+        />
+
+        {!keyConfigured ? (
+          <p className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            Setup note: add <code>NEXT_PUBLIC_WEB3FORMS_KEY</code> to your{" "}
+            <code>.env</code> file to enable form delivery.
           </p>
         ) : null}
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="message" className="text-sm font-medium text-charcoal">
-          How can we help? <span className="text-gold">*</span>
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          required
-          rows={5}
-          className={inputClass}
-          placeholder="Tell us about your practice and what you're looking for..."
-        />
-      </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="name" className="text-sm font-medium text-charcoal">
+              Full name <span className="text-gold">*</span>
+            </label>
+            <input id="name" name="name" required className={inputClass} placeholder="Jane Doe" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-sm font-medium text-charcoal">
+              Email <span className="text-gold">*</span>
+            </label>
+            <input id="email" name="email" type="email" required className={inputClass} placeholder="jane@practice.com" />
+          </div>
+        </div>
 
-      {status === "error" ? (
-        <p className="flex items-center gap-2 text-sm text-red-600">
-          <AlertCircle className="h-4 w-4" />
-          {error}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="phone" className="text-sm font-medium text-charcoal">
+              Phone
+            </label>
+            <input id="phone" name="phone" type="tel" className={inputClass} placeholder="(555) 123-4567" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="practice" className="text-sm font-medium text-charcoal">
+              Practice / Specialty
+            </label>
+            <input id="practice" name="practice" className={inputClass} placeholder="Family Medicine" />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <span id="service-label" className="text-sm font-medium text-charcoal">
+            Service of interest <span className="text-gold">*</span>
+          </span>
+          <input type="hidden" name="service" value={service} />
+          <Select
+            id="service"
+            labelId="service-label"
+            options={serviceOptions}
+            value={service}
+            onChange={(v) => {
+              setService(v);
+              setServiceTouched(true);
+            }}
+            placeholder="Select a service…"
+            invalid={serviceTouched}
+          />
+          {serviceTouched && !service ? (
+            <p className="flex items-center gap-1.5 text-xs text-red-600">
+              <AlertCircle className="h-3.5 w-3.5" />
+              Please select a service.
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="message" className="text-sm font-medium text-charcoal">
+            How can we help? <span className="text-gold">*</span>
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            rows={5}
+            className={inputClass}
+            placeholder="Tell us about your practice and what you're looking for..."
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium text-charcoal">
+            Verification <span className="text-gold">*</span>
+          </span>
+          <div className="overflow-hidden rounded-xl border border-border bg-surface/50 p-3">
+            <div key={captchaKey} className="h-captcha" data-captcha="true" />
+          </div>
+        </div>
+
+        {status === "error" ? (
+          <p className="flex items-center gap-2 text-sm text-red-600">
+            <AlertCircle className="h-4 w-4" />
+            {error}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={status === "submitting"}
+          className="inline-flex h-[clamp(2.75rem,2.63rem+0.54vw,3rem)] items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-gradient-gold px-[clamp(1.25rem,1.08rem+0.76vw,1.625rem)] text-[clamp(0.9rem,0.86rem+0.16vw,0.975rem)] font-semibold text-white shadow-[var(--shadow-gold)] transition-all duration-300 ease-[var(--ease-premium)] hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-70"
+        >
+          {status === "submitting" ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            <>
+              Send Message
+              <Send className="h-4 w-4" />
+            </>
+          )}
+        </button>
+
+        <p className="text-xs text-gray-medium">
+          By submitting, you agree to be contacted about your inquiry. We respect
+          your privacy and never share your information.
         </p>
-      ) : null}
-
-      <button
-        type="submit"
-        disabled={status === "submitting"}
-        className="inline-flex h-[clamp(2.75rem,2.63rem+0.54vw,3rem)] items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-gradient-gold px-[clamp(1.25rem,1.08rem+0.76vw,1.625rem)] text-[clamp(0.9rem,0.86rem+0.16vw,0.975rem)] font-semibold text-white shadow-[var(--shadow-gold)] transition-all duration-300 ease-[var(--ease-premium)] hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-70"
-      >
-        {status === "submitting" ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Sending...
-          </>
-        ) : (
-          <>
-            Send Message
-            <Send className="h-4 w-4" />
-          </>
-        )}
-      </button>
-
-      <p className="text-xs text-gray-medium">
-        By submitting, you agree to be contacted about your inquiry. We respect
-        your privacy and never share your information.
-      </p>
-    </form>
+      </form>
+    </>
   );
 }
