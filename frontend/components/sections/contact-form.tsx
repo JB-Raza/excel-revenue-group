@@ -10,7 +10,6 @@ import { Select } from "@/components/ui/select";
 import { BookingPicker } from "@/components/sections/booking-picker";
 import {
   bookConsultationSlot,
-  cancelConsultationBooking,
   SlotTakenError,
 } from "@/firebase/book-slot";
 import { isFirebaseConfigured } from "@/firebase/use-schedule";
@@ -25,6 +24,7 @@ export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string>("");
   const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaLoadError, setCaptchaLoadError] = useState(false);
   const [service, setService] = useState<string>("");
   const [serviceTouched, setServiceTouched] = useState(false);
   const [preferredDate, setPreferredDate] = useState("");
@@ -35,7 +35,19 @@ export function ContactForm() {
 
   function resetCaptcha() {
     setCaptchaToken("");
+    setCaptchaLoadError(false);
     captchaRef.current?.resetCaptcha();
+  }
+
+  function formatSubmitError(message: string): string {
+    const lower = message.toLowerCase();
+    if (lower.includes("marked as spam")) {
+      return "Submission was flagged as spam by Web3Forms. Try again after the captcha fully loads, or contact us by phone. If this keeps happening, ask Web3Forms support to review your domain.";
+    }
+    if (lower.includes("could not validate hcaptcha") || lower.includes("captcha")) {
+      return "Captcha validation failed. Complete the checkbox again and resubmit.";
+    }
+    return message;
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -72,8 +84,7 @@ export function ContactForm() {
     formData.set("preferred_time_to", preferredSlot.timeTo);
     formData.set("consultation_slot", slotSummary);
     formData.set("h-captcha-response", captchaToken);
-
-    let bookingId: string | null = null;
+    formData.set("replyto", String(formData.get("email") ?? ""));
 
     try {
       if (!isFirebaseConfigured()) {
@@ -82,7 +93,26 @@ export function ContactForm() {
         return;
       }
 
-      bookingId = await bookConsultationSlot({
+      // Email first — only book the slot if Web3Forms accepts the submission.
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setStatus("error");
+        resetCaptcha();
+        setError(
+          formatSubmitError(
+            data.message ||
+              "Submission failed. Check your Web3Forms access key and try again.",
+          ),
+        );
+        return;
+      }
+
+      await bookConsultationSlot({
         date: preferredDate,
         timeFrom: preferredSlot.timeFrom,
         timeTo: preferredSlot.timeTo,
@@ -94,41 +124,24 @@ export function ContactForm() {
         message: String(formData.get("message") ?? ""),
       });
 
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { Accept: "application/json" },
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStatus("success");
-        form.reset();
-        setService("");
-        setServiceTouched(false);
-        setPreferredDate("");
-        setPreferredSlot(null);
-        setScheduleTouched(false);
-        resetCaptcha();
-      } else {
-        if (bookingId) {
-          await cancelConsultationBooking(bookingId).catch(() => undefined);
-        }
-        setStatus("error");
-        resetCaptcha();
-        setError(
-          data.message ||
-            "Submission failed. Check your Web3Forms access key and try again.",
-        );
-      }
+      setStatus("success");
+      form.reset();
+      setService("");
+      setServiceTouched(false);
+      setPreferredDate("");
+      setPreferredSlot(null);
+      setScheduleTouched(false);
+      resetCaptcha();
     } catch (err) {
-      if (bookingId) {
-        await cancelConsultationBooking(bookingId).catch(() => undefined);
-      }
       setStatus("error");
       resetCaptcha();
       if (err instanceof SlotTakenError) {
         setPreferredSlot(null);
         setError(err.message);
+      } else if (err instanceof TypeError) {
+        setError(
+          "Could not reach the form server (network or DNS issue). Try another network, disable ad blockers, or use Google DNS (8.8.8.8). If the captcha box is blank, hCaptcha may be blocked on your connection.",
+        );
       } else {
         setError(
           err instanceof Error
@@ -295,10 +308,24 @@ export function ContactForm() {
               ref={captchaRef}
               sitekey={siteConfig.web3FormsHcaptchaSiteKey}
               reCaptchaCompat={false}
-              onVerify={setCaptchaToken}
+              onVerify={(token) => {
+                setCaptchaToken(token);
+                setCaptchaLoadError(false);
+              }}
               onExpire={() => setCaptchaToken("")}
+              onError={() => {
+                setCaptchaToken("");
+                setCaptchaLoadError(true);
+              }}
             />
           </div>
+          {captchaLoadError ? (
+            <p className="flex items-start gap-1.5 text-xs text-red-600">
+              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              Captcha could not load. Disable ad blockers, switch network, or set
+              DNS to 8.8.8.8 — your connection may be blocking hcaptcha.com.
+            </p>
+          ) : null}
         </div>
 
         {status === "error" ? (
