@@ -15,7 +15,7 @@ const ceo = {
   name: "Asif Raza",
   role: "Founder & Chief Executive Officer (CEO)",
   initials: "AR",
-  photo: "/ceo.jpeg",
+  photo: "/ceo.png",
   bio: [
     "My journey in U.S. Medical Billing began with hands-on experience across the full Revenue Cycle Management (RCM) process, where I worked closely with healthcare providers to optimize financial performance, reduce claim denials, and improve reimbursement outcomes. While the experience was invaluable, I envisioned something greater: a company built on accountability, precision, transparency, and measurable results.",
     "Driven by that vision, I founded ERG, a specialized U.S. Medical Billing and Revenue Cycle Management company dedicated to helping medical practices strengthen their financial health through accurate, HIPAA-compliant, and performance-focused billing solutions. As Founder and CEO, I remain actively involved in strategic planning, operational oversight, and quality assurance to ensure every client receives the highest standard of service.",
