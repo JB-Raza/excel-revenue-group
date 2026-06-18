@@ -73,7 +73,7 @@ export function BookingPicker({
             Preferred consultation time
           </h3>
           <p className="mt-0.5 text-xs text-gray-medium">
-            Mon–Fri, 10:00 AM – 9:00 PM · 2-hour slots · 15-minute breaks
+            Mon–Fri, 10:00 AM – 9:00 PM
           </p>
         </div>
       </div>
