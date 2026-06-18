@@ -113,7 +113,8 @@ export default function ContactPage() {
                 Request a Consultation
               </h2>
               <p className="mt-2 mb-6 text-gray-medium">
-                Fill out the form and we&apos;ll get back to you promptly.
+                Choose a date and time, then tell us about your practice. We&apos;ll
+                confirm your consultation shortly.
               </p>
               <ContactForm />
             </div>

@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /Schedule_Dates/{docId} {
+      allow read: if true;
+
+      // Client creates confirmed bookings (doc id must start with booking-)
+      allow create: if docId.matches('^booking-.*')
+        && request.resource.data.bookingStatus == true
+        && request.resource.data.date is string
+        && request.resource.data.userEmail is string
+        && request.resource.data.userEmail.size() > 3;
+
+      // Allow rollback if Web3Forms fails after booking was saved
+      allow delete: if docId.matches('^booking-.*')
+        && resource.data.bookingStatus == true;
+
+      allow update: if false;
+    }
+  }
+}

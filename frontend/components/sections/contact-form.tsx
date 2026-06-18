@@ -1,35 +1,41 @@
 "use client";
 
-import Script from "next/script";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { serviceOptions } from "@/lib/services";
+import { formatDateLong, type TimeSlotOption } from "@/lib/schedule";
 import { Select } from "@/components/ui/select";
+import { BookingPicker } from "@/components/sections/booking-picker";
+import {
+  bookConsultationSlot,
+  cancelConsultationBooking,
+  SlotTakenError,
+} from "@/firebase/book-slot";
+import { isFirebaseConfigured } from "@/firebase/use-schedule";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
 const inputClass =
   "w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-charcoal placeholder:text-gray-medium/70 transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30";
 
-function getCaptchaToken(form: HTMLFormElement): string {
-  return (
-    form.querySelector<HTMLTextAreaElement>('textarea[name="h-captcha-response"]')
-      ?.value ?? ""
-  );
-}
-
 export function ContactForm() {
+  const captchaRef = useRef<HCaptcha>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string>("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [service, setService] = useState<string>("");
   const [serviceTouched, setServiceTouched] = useState(false);
-  const [captchaKey, setCaptchaKey] = useState(0);
+  const [preferredDate, setPreferredDate] = useState("");
+  const [preferredSlot, setPreferredSlot] = useState<TimeSlotOption | null>(null);
+  const [scheduleTouched, setScheduleTouched] = useState(false);
 
   const keyConfigured = Boolean(siteConfig.web3FormsKey?.trim());
 
   function resetCaptcha() {
-    setCaptchaKey((k) => k + 1);
+    setCaptchaToken("");
+    captchaRef.current?.resetCaptcha();
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -40,8 +46,12 @@ export function ContactForm() {
       return;
     }
 
+    if (!preferredDate || !preferredSlot) {
+      setScheduleTouched(true);
+      return;
+    }
+
     const form = e.currentTarget;
-    const captchaToken = getCaptchaToken(form);
     if (!captchaToken) {
       setStatus("error");
       setError("Please complete the captcha verification.");
@@ -52,9 +62,38 @@ export function ContactForm() {
     setError("");
 
     const formData = new FormData(form);
-    formData.set("subject", `New consultation request — ${service}`);
+    const slotSummary = `${formatDateLong(preferredDate)} · ${preferredSlot.label}`;
+    formData.set(
+      "subject",
+      `New consultation request — ${service} — ${slotSummary}`,
+    );
+    formData.set("preferred_date", preferredDate);
+    formData.set("preferred_time_from", preferredSlot.timeFrom);
+    formData.set("preferred_time_to", preferredSlot.timeTo);
+    formData.set("consultation_slot", slotSummary);
+    formData.set("h-captcha-response", captchaToken);
+
+    let bookingId: string | null = null;
 
     try {
+      if (!isFirebaseConfigured()) {
+        setStatus("error");
+        setError("Booking is unavailable — Firebase is not configured.");
+        return;
+      }
+
+      bookingId = await bookConsultationSlot({
+        date: preferredDate,
+        timeFrom: preferredSlot.timeFrom,
+        timeTo: preferredSlot.timeTo,
+        userEmail: String(formData.get("email") ?? ""),
+        userName: String(formData.get("name") ?? ""),
+        userPhone: String(formData.get("phone") ?? ""),
+        practice: String(formData.get("practice") ?? ""),
+        service,
+        message: String(formData.get("message") ?? ""),
+      });
+
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { Accept: "application/json" },
@@ -66,8 +105,14 @@ export function ContactForm() {
         form.reset();
         setService("");
         setServiceTouched(false);
+        setPreferredDate("");
+        setPreferredSlot(null);
+        setScheduleTouched(false);
         resetCaptcha();
       } else {
+        if (bookingId) {
+          await cancelConsultationBooking(bookingId).catch(() => undefined);
+        }
         setStatus("error");
         resetCaptcha();
         setError(
@@ -75,10 +120,22 @@ export function ContactForm() {
             "Submission failed. Check your Web3Forms access key and try again.",
         );
       }
-    } catch {
+    } catch (err) {
+      if (bookingId) {
+        await cancelConsultationBooking(bookingId).catch(() => undefined);
+      }
       setStatus("error");
       resetCaptcha();
-      setError("Network error. Please try again or contact us directly.");
+      if (err instanceof SlotTakenError) {
+        setPreferredSlot(null);
+        setError(err.message);
+      } else {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Network error. Please try again or contact us directly.",
+        );
+      }
     }
   }
 
@@ -87,10 +144,11 @@ export function ContactForm() {
       <div className="flex flex-col items-center gap-4 rounded-[var(--radius-card)] border border-gold/30 bg-gold-soft/10 p-10 text-center">
         <CheckCircle2 className="h-12 w-12 text-gold" />
         <h3 className="font-heading text-xl font-bold text-charcoal">
-          Thank you — message sent!
+          Consultation booked!
         </h3>
         <p className="text-sm text-gray-medium">
-          Our team will get back to you shortly. For urgent matters, call us at{" "}
+          Your time slot is confirmed. We&apos;ve also sent your details to our
+          team. For urgent matters, call us at{" "}
           <a href={siteConfig.contact.phoneHref} className="font-semibold text-gold">
             {siteConfig.contact.phone}
           </a>
@@ -101,13 +159,7 @@ export function ContactForm() {
   }
 
   return (
-    <>
-      <Script
-        src="https://web3forms.com/client/script.js"
-        strategy="afterInteractive"
-      />
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input type="hidden" name="access_key" value={siteConfig.web3FormsKey} />
         <input
           type="hidden"
@@ -186,6 +238,40 @@ export function ContactForm() {
           ) : null}
         </div>
 
+        <BookingPicker
+          date={preferredDate}
+          slot={preferredSlot}
+          onDateChange={(value) => {
+            setPreferredDate(value);
+            setScheduleTouched(true);
+          }}
+          onSlotChange={(value) => {
+            setPreferredSlot(value);
+            setScheduleTouched(true);
+          }}
+          invalid={scheduleTouched}
+        />
+        <input type="hidden" name="preferred_date" value={preferredDate} />
+        <input
+          type="hidden"
+          name="preferred_time_from"
+          value={preferredSlot?.timeFrom ?? ""}
+        />
+        <input
+          type="hidden"
+          name="preferred_time_to"
+          value={preferredSlot?.timeTo ?? ""}
+        />
+        <input
+          type="hidden"
+          name="consultation_slot"
+          value={
+            preferredDate && preferredSlot
+              ? `${formatDateLong(preferredDate)} · ${preferredSlot.label}`
+              : ""
+          }
+        />
+
         <div className="flex flex-col gap-1.5">
           <label htmlFor="message" className="text-sm font-medium text-charcoal">
             How can we help? <span className="text-gold">*</span>
@@ -205,7 +291,13 @@ export function ContactForm() {
             Verification <span className="text-gold">*</span>
           </span>
           <div className="overflow-hidden rounded-xl border border-border bg-surface/50 p-3">
-            <div key={captchaKey} className="h-captcha" data-captcha="true" />
+            <HCaptcha
+              ref={captchaRef}
+              sitekey={siteConfig.web3FormsHcaptchaSiteKey}
+              reCaptchaCompat={false}
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken("")}
+            />
           </div>
         </div>
 
@@ -228,7 +320,7 @@ export function ContactForm() {
             </>
           ) : (
             <>
-              Send Message
+              Book Consultation
               <Send className="h-4 w-4" />
             </>
           )}
@@ -239,6 +331,5 @@ export function ContactForm() {
           your privacy and never share your information.
         </p>
       </form>
-    </>
   );
 }

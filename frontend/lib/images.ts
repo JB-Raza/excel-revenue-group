@@ -61,7 +61,7 @@ export const teamMembers = [
   { src: stockImages.portraitPhysician, alt: "Board-certified physician partner", label: "Physician Partner" },
   { src: stockImages.portraitSpecialist, alt: "Specialist physician consultant", label: "Specialist" },
   { src: stockImages.portraitPrimaryCare, alt: "Primary care physician advisor", label: "Primary Care" },
-  { src: stockImages.portraitHospital, alt: "Hospital medicine physician advisor", label: "Hospital Medicine" },
+  { src: stockImages.portraitHospital, alt: "Family medicine physician advisor", label: "Family Medicine" },
   { src: stockImages.portraitSurgery, alt: "Surgical specialist physician advisor", label: "Surgery" },
 ] as const;
 

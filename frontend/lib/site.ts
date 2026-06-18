@@ -91,6 +91,9 @@ export const siteConfig = {
 
   // Contact form — set NEXT_PUBLIC_WEB3FORMS_KEY in .env (client-safe public key).
   web3FormsKey: process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "",
+
+  /** Web3Forms bundled hCaptcha site key (free plan). Do not use custom keys. */
+  web3FormsHcaptchaSiteKey: "50b2fe65-b00b-4b9e-ad62-3ba471098be2",
 } as const;
 
 export type NavItem = {
