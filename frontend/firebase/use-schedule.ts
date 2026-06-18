@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "@/firebase/firebase";
+import { getDb, isFirebaseConfigured } from "@/firebase/firebase";
 import { buildWeeklyScheduleTemplates } from "@/firebase/schedule-slots";
 import type { ScheduleDate } from "@/firebase/types.firebase";
 import {
@@ -12,9 +12,7 @@ import {
   type TimeSlotOption,
 } from "@/lib/schedule";
 
-export function isFirebaseConfigured(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim());
-}
+export { isFirebaseConfigured };
 
 function parseScheduleDoc(data: Record<string, unknown>): ScheduleDate {
   return {
@@ -43,7 +41,7 @@ export function useSchedule() {
     }
 
     const unsubscribe = onSnapshot(
-      collection(db, "Schedule_Dates"),
+      collection(getDb(), "Schedule_Dates"),
       (snapshot) => {
         const rows = snapshot.docs.map((docSnap) =>
           parseScheduleDoc(docSnap.data() as Record<string, unknown>),

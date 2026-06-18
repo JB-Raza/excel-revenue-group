@@ -81,7 +81,9 @@ export function BookingPicker({
       {!firebaseReady ? (
         <p className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-800">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          Add Firebase env vars to enable live availability from Firestore.
+          Firebase booking is not configured on this deployment. Add the four{" "}
+          <code>NEXT_PUBLIC_FIREBASE_*</code> vars in Vercel (Production), then{" "}
+          <strong>Redeploy</strong> with cache cleared.
         </p>
       ) : null}
 

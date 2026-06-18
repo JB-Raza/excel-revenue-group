@@ -1,13 +1,25 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getApp, getApps, initializeApp, type FirebaseApp } from "firebase/app";
+import { getFirestore, type Firestore } from "firebase/firestore";
+import { isFirebaseConfigured, siteConfig } from "@/lib/site";
 
-/** Firestore-only — see .env.sample for required vars. */
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+let dbInstance: Firestore | null = null;
 
-export const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+function getFirebaseApp(): FirebaseApp {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase is not configured.");
+  }
+  if (getApps().length > 0) {
+    return getApp();
+  }
+  return initializeApp(siteConfig.firebase);
+}
+
+/** Lazy Firestore client — only initialized when Firebase env vars exist. */
+export function getDb(): Firestore {
+  if (!dbInstance) {
+    dbInstance = getFirestore(getFirebaseApp());
+  }
+  return dbInstance;
+}
+
+export { isFirebaseConfigured };

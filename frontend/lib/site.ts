@@ -94,7 +94,21 @@ export const siteConfig = {
 
   /** Web3Forms bundled hCaptcha site key (free plan). Do not use custom keys. */
   web3FormsHcaptchaSiteKey: "50b2fe65-b00b-4b9e-ad62-3ba471098be2",
+
+  /** Firestore booking — set all four NEXT_PUBLIC_FIREBASE_* vars in Vercel, then redeploy. */
+  firebase: {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+  },
 } as const;
+
+/** True when Firebase env vars were present at build time (required for static export). */
+export function isFirebaseConfigured(): boolean {
+  const { apiKey, authDomain, projectId, appId } = siteConfig.firebase;
+  return Boolean(apiKey && authDomain && projectId && appId);
+}
 
 export type NavItem = {
   label: string;

@@ -1,5 +1,5 @@
 import { deleteDoc, doc, runTransaction, serverTimestamp } from "firebase/firestore";
-import { db } from "@/firebase/firebase";
+import { getDb } from "@/firebase/firebase";
 import { toDayOfWeek } from "@/lib/schedule";
 
 export class SlotTakenError extends Error {
@@ -42,6 +42,7 @@ export async function bookConsultationSlot(
   }
 
   const id = bookingDocId(input.date, input.timeFrom, input.timeTo);
+  const db = getDb();
   const bookingRef = doc(db, "Schedule_Dates", id);
 
   try {
@@ -80,5 +81,5 @@ export async function bookConsultationSlot(
 
 /** Roll back a booking if email delivery fails after Firestore write. */
 export async function cancelConsultationBooking(bookingId: string): Promise<void> {
-  await deleteDoc(doc(db, "Schedule_Dates", bookingId));
+  await deleteDoc(doc(getDb(), "Schedule_Dates", bookingId));
 }
