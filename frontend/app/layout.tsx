@@ -7,7 +7,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
-
+import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -76,6 +76,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
+      <Analytics />
       <body className="min-h-full flex flex-col bg-white text-charcoal">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <Navbar />
