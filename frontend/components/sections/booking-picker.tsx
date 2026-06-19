@@ -42,7 +42,7 @@ export function BookingPicker({
       return;
     }
     if (!isBookingDateAllowed(date)) {
-      setDateError("Please choose a weekday that is not a holiday.");
+      setDateError("Consultations are Mon–Fri only. Please choose a weekday.");
       onSlotChange(null);
       return;
     }
