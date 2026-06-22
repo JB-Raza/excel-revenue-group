@@ -5,16 +5,29 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { getDb } from "@/firebase/firebase";
-import { dayOfWeekForDate } from "@/firebase/slot-config";
+import {
+  dayOfWeekForDate,
+  etNowMinutes,
+  etTodayIso,
+  timeToMinutes,
+} from "@/firebase/slot-config";
 
 const AVAILABLE = "Available_Slots";
 const BOOKINGS = "Bookings";
 
 export class SlotTakenError extends Error {
-  constructor() {
-    super("That time slot was just booked. Please choose another.");
+  constructor(message = "That time slot was just booked. Please choose another.") {
+    super(message);
     this.name = "SlotTakenError";
   }
+}
+
+/** True when a slot's start time (in ET) is now or in the past. */
+function isSlotStartPast(date: string, timeFrom: string): boolean {
+  const today = etTodayIso();
+  if (date < today) return true;
+  if (date > today) return false;
+  return timeToMinutes(timeFrom) <= etNowMinutes();
 }
 
 export class BookingFailedError extends Error {
@@ -50,11 +63,26 @@ export async function bookConsultationSlot(
   const slotRef = doc(db, AVAILABLE, input.slotId);
   const bookingRef = doc(collection(db, BOOKINGS));
 
+  // Hard guard: never book a slot whose start time has already passed (ET),
+  // even if it briefly lingered in the UI.
+  if (isSlotStartPast(input.date, input.timeFrom)) {
+    throw new SlotTakenError(
+      "That time has already started (Eastern Time). Please pick a later slot.",
+    );
+  }
+
   try {
     await runTransaction(db, async (tx) => {
       const slotSnap = await tx.get(slotRef);
       if (!slotSnap.exists() || slotSnap.data()?.isAvailable !== true) {
         throw new SlotTakenError();
+      }
+
+      const slotData = slotSnap.data() as { date?: string; timeFrom?: string };
+      if (isSlotStartPast(String(slotData.date), String(slotData.timeFrom))) {
+        throw new SlotTakenError(
+          "That time has already started (Eastern Time). Please pick a later slot.",
+        );
       }
 
       tx.set(bookingRef, {

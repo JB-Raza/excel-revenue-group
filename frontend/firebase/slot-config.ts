@@ -49,6 +49,71 @@ export function formatSlotLabel(timeFrom: string, timeTo: string): string {
   return `${formatTime12h(timeFrom)} – ${formatTime12h(timeTo)}`;
 }
 
+/** Offset (ms) of a named timezone from UTC at a given instant. */
+function tzOffsetMs(timeZone: string, date: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
+  let hour = get("hour");
+  if (hour === 24) hour = 0;
+  const asUTC = Date.UTC(
+    get("year"),
+    get("month") - 1,
+    get("day"),
+    hour,
+    get("minute"),
+    get("second"),
+  );
+  return asUTC - date.getTime();
+}
+
+/** The absolute instant for an ET wall-clock time on a given calendar date. */
+function etWallTimeToInstant(dateIso: string, time: string): Date {
+  const [y, mo, d] = dateIso.split("-").map(Number);
+  const [h, mi] = time.split(":").map(Number);
+  const naiveUTC = Date.UTC(y, mo - 1, d, h, mi);
+  const offset = tzOffsetMs(TIMEZONE, new Date(naiveUTC));
+  return new Date(naiveUTC - offset);
+}
+
+function formatLocalTime(instant: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(instant);
+}
+
+/**
+ * Label for a slot in the *visitor's* local timezone, with the ET equivalent in
+ * parentheses — e.g. "7:00 PM – 9:00 PM your time (10:00 AM – 12:00 PM ET)".
+ * If the visitor is already on Eastern Time, just shows "10:00 AM – 12:00 PM ET".
+ */
+export function formatSlotLabelLocal(
+  dateIso: string,
+  timeFrom: string,
+  timeTo: string,
+): string {
+  const etLabel = formatSlotLabel(timeFrom, timeTo);
+  const fromInstant = etWallTimeToInstant(dateIso, timeFrom);
+  const toInstant = etWallTimeToInstant(dateIso, timeTo);
+
+  const localOffset = -fromInstant.getTimezoneOffset() * 60_000;
+  const etOffset = tzOffsetMs(TIMEZONE, fromInstant);
+  if (localOffset === etOffset) return `${etLabel} ET`;
+
+  const localLabel = `${formatLocalTime(fromInstant)} – ${formatLocalTime(toInstant)}`;
+  return `Your Time: ${localLabel}\nET: (${etLabel})`;
+}
+
 /** Daily slot grid: 2h each, 30min gaps, 10:00–22:00 → 5 slots. */
 export function buildDaySlots(): { timeFrom: string; timeTo: string }[] {
   const slots: { timeFrom: string; timeTo: string }[] = [];

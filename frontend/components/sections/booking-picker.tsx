@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   etTodayIso,
   formatDateLong,
+  formatSlotLabelLocal,
   isBookingDateAllowed,
   type TimeSlotOption,
 } from "@/lib/schedule";
@@ -80,7 +81,8 @@ export function BookingPicker({
             Preferred consultation time
           </h3>
           <p className="mt-0.5 text-xs text-gray-medium">
-            Available every day · 10:00 AM – 10:00 PM (Eastern Time) · 2-hour sessions
+            Available every day · 2-hour sessions · times shown in your local
+            timezone (Eastern Time in parentheses)
           </p>
         </div>
       </div>
@@ -163,14 +165,14 @@ export function BookingPicker({
                     aria-checked={selected}
                     onClick={() => onSlotChange(option)}
                     className={cn(
-                      "rounded-xl border px-3 py-2.5 text-left text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gold/30",
+                      "whitespace-pre-line rounded-xl border px-3 py-2.5 text-left text-sm leading-snug transition-colors focus:outline-none focus:ring-2 focus:ring-gold/30",
                       selected
                         ? "border-gold bg-gold-soft/30 font-semibold text-charcoal"
                         : "border-border bg-white text-gray-medium hover:border-gold/50 hover:text-charcoal",
                       invalid && !slot ? "border-red-300" : "",
                     )}
                   >
-                    {option.label}
+                    {formatSlotLabelLocal(date, option.timeFrom, option.timeTo)}
                   </button>
                 );
               })}
