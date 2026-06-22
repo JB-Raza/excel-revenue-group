@@ -17,6 +17,10 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/contact",
 });
 
+// Render on every request (never prerendered at build time) so anything
+// time-sensitive — like the booking date floor — is always current.
+export const dynamic = "force-dynamic";
+
 const channels = [
   {
     icon: Phone,

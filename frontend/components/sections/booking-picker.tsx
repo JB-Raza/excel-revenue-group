@@ -32,6 +32,13 @@ export function BookingPicker({
   const dateId = useId();
   const { loading, error, getSlotsForDate } = useSchedule();
   const [dateError, setDateError] = useState<string>("");
+  // Computed on the client so the date floor is always "today" in ET, never a
+  // stale value baked into the prerendered HTML at build time.
+  const [minDate, setMinDate] = useState<string>("");
+
+  useEffect(() => {
+    setMinDate(etTodayIso());
+  }, []);
 
   const availableSlots = date ? getSlotsForDate(date) : [];
   const firebaseReady = isFirebaseConfigured();
@@ -103,7 +110,7 @@ export function BookingPicker({
             id={dateId}
             type="date"
             required
-            min={etTodayIso()}
+            min={minDate || undefined}
             value={date}
             onChange={(e) => handleDateChange(e.target.value)}
             className={cn(

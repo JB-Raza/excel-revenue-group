@@ -10,7 +10,8 @@ if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
 }
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // No `output: "export"` — running as a standard Next.js app on Vercel so that
+  // next/image optimization (AVIF/WebP, responsive resizing, lazy loading) is enabled.
   env: {
     NEXT_PUBLIC_FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -18,7 +19,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   },
   images: {
-    unoptimized: true,
+    formats: ["image/avif", "image/webp"],
   },
   trailingSlash: true,
   turbopack: {},
