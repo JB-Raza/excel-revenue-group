@@ -1,67 +1,61 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getDb, isFirebaseConfigured } from "@/firebase/firebase";
-import { buildWeeklyScheduleTemplates } from "@/firebase/schedule-slots";
-import type { ScheduleDate } from "@/firebase/types.firebase";
+import { etTodayIso } from "@/firebase/slot-config";
+import type { AvailableSlot } from "@/firebase/types.firebase";
 import {
-  getAvailableSlotsForDate,
-  isConfirmedBooking,
-  isTemplateRow,
+  availableSlotsForDate,
+  buildLocalSlotsForDate,
   type TimeSlotOption,
 } from "@/lib/schedule";
 
 export { isFirebaseConfigured };
 
-function parseScheduleDoc(data: Record<string, unknown>): ScheduleDate {
+function parseSlot(id: string, data: Record<string, unknown>): AvailableSlot {
   return {
-    dayOfWeek: data.dayOfWeek as ScheduleDate["dayOfWeek"],
+    id,
+    date: String(data.date ?? ""),
+    dayOfWeek: data.dayOfWeek as AvailableSlot["dayOfWeek"],
     timeFrom: String(data.timeFrom ?? ""),
     timeTo: String(data.timeTo ?? ""),
-    isAvailable: Boolean(data.isAvailable ?? true),
-    bookingStatus: Boolean(data.bookingStatus),
-    userEmail: String(data.userEmail ?? ""),
-    date: data.date ? String(data.date) : undefined,
+    isAvailable: Boolean(data.isAvailable),
+    timezone: String(data.timezone ?? ""),
+    bookingId: data.bookingId ? String(data.bookingId) : undefined,
   };
 }
 
 export function useSchedule() {
-  const [templates, setTemplates] = useState<ScheduleDate[]>([]);
-  const [bookings, setBookings] = useState<ScheduleDate[]>([]);
+  const [slots, setSlots] = useState<AvailableSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isFirebaseConfigured()) {
-      setTemplates(buildWeeklyScheduleTemplates());
-      setBookings([]);
       setLoading(false);
       return;
     }
 
+    const slotsQuery = query(
+      collection(getDb(), "Available_Slots"),
+      where("date", ">=", etTodayIso()),
+    );
+
     const unsubscribe = onSnapshot(
-      collection(getDb(), "Schedule_Dates"),
+      slotsQuery,
       (snapshot) => {
-        const rows = snapshot.docs.map((docSnap) =>
-          parseScheduleDoc(docSnap.data() as Record<string, unknown>),
+        setSlots(
+          snapshot.docs.map((docSnap) =>
+            parseSlot(docSnap.id, docSnap.data() as Record<string, unknown>),
+          ),
         );
-
-        const nextTemplates = rows.filter(isTemplateRow);
-        const nextBookings = rows.filter(isConfirmedBooking);
-
-        setTemplates(
-          nextTemplates.length > 0 ? nextTemplates : buildWeeklyScheduleTemplates(),
-        );
-        setBookings(nextBookings);
         setError(null);
         setLoading(false);
       },
       (err) => {
-        console.error("Schedule_Dates listener failed:", err);
-        setTemplates(buildWeeklyScheduleTemplates());
-        setBookings([]);
-        setError("Could not load live availability. Showing default schedule.");
+        console.error("Available_Slots listener failed:", err);
+        setError("Could not load live availability. Please try again later.");
         setLoading(false);
       },
     );
@@ -71,10 +65,14 @@ export function useSchedule() {
 
   const getSlotsForDate = useMemo(
     () =>
-      (dateStr: string): TimeSlotOption[] =>
-        getAvailableSlotsForDate(dateStr, templates, bookings),
-    [templates, bookings],
+      (dateStr: string): TimeSlotOption[] => {
+        if (!isFirebaseConfigured()) {
+          return availableSlotsForDate(dateStr, buildLocalSlotsForDate(dateStr));
+        }
+        return availableSlotsForDate(dateStr, slots);
+      },
+    [slots],
   );
 
-  return { templates, bookings, loading, error, getSlotsForDate };
+  return { slots, loading, error, getSlotsForDate };
 }

@@ -5,8 +5,70 @@ export type HeroImage = {
   alt: string;
   /** cover = landscape photo fill; contain = show full image (portrait / maps). */
   fit?: "cover" | "contain";
+  /** Tailwind object-position classes, e.g. object-[center_25%]. Overrides focus map. */
   position?: string;
+  /** Preset vertical crop — use when the same stock path needs a shared default. */
+  focus?: HeroFocus;
 };
+
+/**
+ * Vertical crop presets for object-cover heroes.
+ * Tune per image in heroFocusBySrc — "upper" / "top" show more faces when torsos are centered.
+ */
+export type HeroFocus = "top" | "upper" | "center" | "lower" | "bottom";
+
+export const heroFocusClass: Record<HeroFocus, string> = {
+  top: "object-[center_12%]",
+  upper: "object-[center_28%]",
+  center: "object-center",
+  lower: "object-[center_72%]",
+  bottom: "object-bottom",
+};
+
+/** Default vertical focus keyed by stock image path — single place to tune all heroes. */
+export const heroFocusBySrc: Record<string, HeroFocus> = {
+  // Page heroes
+  [stockImages.aboutHero]: "upper",
+  [stockImages.servicesHero]: "top",
+  [stockImages.contactHero]: "upper",
+  [stockImages.specialtiesHero]: "upper",
+  [stockImages.homeHero]: "upper",
+
+  // Service heroes
+  [stockImages.billingOffice]: "center",
+  [stockImages.credentialing]: "upper",
+  [stockImages.virtualAssistance]: "top",
+  [stockImages.eligibility]: "upper",
+  [stockImages.claimsSubmission]: "center",
+  [stockImages.arManagement]: "upper",
+  [stockImages.denialManagement]: "center",
+  [stockImages.providerEnrollment]: "upper",
+
+  // Specialty heroes
+  [stockImages.cardiology]: "upper",
+  [stockImages.orthopedics]: "upper",
+  [stockImages.behavioralHealth]: "upper",
+  [stockImages.internalMedicine]: "upper",
+  [stockImages.pediatrics]: "upper",
+  [stockImages.ophthalmology]: "center",
+  [stockImages.familyMedicine]: "upper",
+  [stockImages.painManagement]: "center",
+  [stockImages.generalSurgery]: "upper",
+  [stockImages.laboratory]: "center",
+  [stockImages.pharmacy]: "upper",
+  [stockImages.chiropractic]: "upper",
+};
+
+export function resolveHeroPosition(image: HeroImage): string {
+  if (image.position) return image.position;
+  if (image.fit === "contain") return "object-center";
+  const focus = image.focus ?? heroFocusBySrc[image.src] ?? "center";
+  return heroFocusClass[focus];
+}
+
+export function withHeroFocus(image: HeroImage): HeroImage {
+  return { ...image, position: resolveHeroPosition(image) };
+}
 
 export function isPortraitPhoto(src: string): boolean {
   return isPortraitStock(src);
@@ -14,36 +76,36 @@ export function isPortraitPhoto(src: string): boolean {
 
 export function photoObjectPosition(src: string): string {
   if (isPortraitStock(src)) return "object-top";
-  return "object-center";
+  return resolveHeroPosition({ src, alt: "" });
 }
 
 /** Hero banners for inner pages — landscape stock photos. */
 export const pageHeroImages = {
-  home: {
+  home: withHeroFocus({
     src: stockImages.homeHero,
     alt: "Physician and patient in a positive consultation",
     fit: "cover",
-  },
-  about: {
+  }),
+  about: withHeroFocus({
     src: stockImages.aboutHero,
     alt: "Medical professionals in a collaborative clinical setting",
     fit: "cover",
-  },
-  services: {
+  }),
+  services: withHeroFocus({
     src: stockImages.servicesHero,
     alt: "Diverse team of doctors and nurses in a hospital",
     fit: "cover",
-  },
-  contact: {
+  }),
+  contact: withHeroFocus({
     src: stockImages.contactHero,
     alt: "Patient consultation in a modern medical office",
     fit: "cover",
-  },
-  specialties: {
+  }),
+  specialties: withHeroFocus({
     src: stockImages.specialtiesHero,
     alt: "Hospital clinical environment serving multiple medical specialties",
     fit: "cover",
-  },
+  }),
   states: {
     src: "/images/about/usa-map.png",
     alt: "Map of the United States showing nationwide service coverage",
@@ -77,7 +139,7 @@ export const serviceImages: Record<string, string> = {
   "provider-enrollment": stockImages.providerEnrollment,
 };
 
-const serviceHeroImages: Record<string, HeroImage> = {
+const serviceHeroImagesRaw: Record<string, HeroImage> = {
   "medical-billing": {
     src: stockImages.billingOffice,
     alt: "Medical billing and revenue cycle management",
@@ -120,10 +182,25 @@ const serviceHeroImages: Record<string, HeroImage> = {
   },
 };
 
+const serviceHeroImages = Object.fromEntries(
+  Object.entries(serviceHeroImagesRaw).map(([slug, image]) => [
+    slug,
+    withHeroFocus(image),
+  ]),
+) as Record<string, HeroImage>;
+
 export function getServiceImage(slug: string): string | undefined {
   return serviceImages[slug];
 }
 
 export function getServiceHeroImage(slug: string): HeroImage | undefined {
   return serviceHeroImages[slug];
+}
+
+/** Specialty detail page hero with per-image crop from heroFocusBySrc. */
+export function getSpecialtyHeroImage(
+  src: string,
+  alt: string,
+): HeroImage {
+  return withHeroFocus({ src, alt, fit: "cover" });
 }

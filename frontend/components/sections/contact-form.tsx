@@ -74,7 +74,7 @@ export function ContactForm() {
     setError("");
 
     const formData = new FormData(form);
-    const slotSummary = `${formatDateLong(preferredDate)} · ${preferredSlot.label}`;
+    const slotSummary = `${formatDateLong(preferredDate)} · ${preferredSlot.label} (ET)`;
     formData.set(
       "subject",
       `New consultation request — ${service} — ${slotSummary}`,
@@ -82,6 +82,7 @@ export function ContactForm() {
     formData.set("preferred_date", preferredDate);
     formData.set("preferred_time_from", preferredSlot.timeFrom);
     formData.set("preferred_time_to", preferredSlot.timeTo);
+    formData.set("preferred_timezone", "Eastern Time (America/New_York)");
     formData.set("consultation_slot", slotSummary);
     formData.set("h-captcha-response", captchaToken);
     formData.set("replyto", String(formData.get("email") ?? ""));
@@ -113,6 +114,7 @@ export function ContactForm() {
       }
 
       await bookConsultationSlot({
+        slotId: preferredSlot.id,
         date: preferredDate,
         timeFrom: preferredSlot.timeFrom,
         timeTo: preferredSlot.timeTo,
@@ -277,10 +279,15 @@ export function ContactForm() {
         />
         <input
           type="hidden"
+          name="preferred_timezone"
+          value="Eastern Time (America/New_York)"
+        />
+        <input
+          type="hidden"
           name="consultation_slot"
           value={
             preferredDate && preferredSlot
-              ? `${formatDateLong(preferredDate)} · ${preferredSlot.label}`
+              ? `${formatDateLong(preferredDate)} · ${preferredSlot.label} (ET)`
               : ""
           }
         />

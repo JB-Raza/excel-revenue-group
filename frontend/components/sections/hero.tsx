@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SlideIn } from "@/components/animations/motion-primitives";
 import { HeroVisual } from "./hero-visual";
 import { pageHeroImages } from "@/lib/images";
+import { cn } from "@/lib/utils";
 
 const trustSignals = [
   { icon: ShieldCheck, label: "HIPAA Compliant" },
@@ -24,7 +25,7 @@ export function Hero() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover object-center"
+          className={cn("object-cover", pageHeroImages.home.position ?? "object-center")}
           priority
         />
         <div className="absolute inset-0 bg-charcoal/35" />

@@ -33,7 +33,7 @@ export function PageHeader({
     <section
       className={cn(
         "relative overflow-hidden border-b border-border/60 bg-surface",
-        image && "min-h-[24rem] md:min-h-[32rem] lg:min-h-[38rem]",
+        image && "min-h-[28rem] md:min-h-[36rem] lg:min-h-[42rem]",
       )}
     >
       {image ? (
@@ -46,7 +46,7 @@ export function PageHeader({
             className={cn(
               image.fit === "contain"
                 ? "object-contain object-right object-center scale-110 md:scale-125"
-                : cn("object-cover object-center", image.position),
+                : cn("object-cover", image.position ?? "object-center"),
             )}
             priority
           />

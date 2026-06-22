@@ -18,6 +18,7 @@ import {
   absoluteUrl,
 } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
+import { getSpecialtyHeroImage } from "@/lib/images";
 import {
   specialties,
   getSpecialty,
@@ -87,11 +88,7 @@ export default async function SpecialtyPage(props: PageProps<"/specialties/[slug
           { name: "Specialties", href: "/specialties" },
           { name: specialty.name },
         ]}
-        image={{
-          src: specialty.heroImage,
-          alt: specialty.heroImageAlt,
-          fit: "cover",
-        }}
+        image={getSpecialtyHeroImage(specialty.heroImage, specialty.heroImageAlt)}
       />
 
       <Section variant="white">

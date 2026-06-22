@@ -4,9 +4,9 @@ import { useEffect, useId, useState } from "react";
 import { AlertCircle, Calendar, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  etTodayIso,
   formatDateLong,
   isBookingDateAllowed,
-  todayIsoLocal,
   type TimeSlotOption,
 } from "@/lib/schedule";
 import { isFirebaseConfigured, useSchedule } from "@/firebase/use-schedule";
@@ -42,7 +42,7 @@ export function BookingPicker({
       return;
     }
     if (!isBookingDateAllowed(date)) {
-      setDateError("Consultations are Mon–Fri only. Please choose a weekday.");
+      setDateError("Please choose today or a future date.");
       onSlotChange(null);
       return;
     }
@@ -73,7 +73,7 @@ export function BookingPicker({
             Preferred consultation time
           </h3>
           <p className="mt-0.5 text-xs text-gray-medium">
-            Mon–Fri, 10:00 AM – 9:00 PM
+            Available every day · 10:00 AM – 10:00 PM (Eastern Time) · 2-hour sessions
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export function BookingPicker({
             id={dateId}
             type="date"
             required
-            min={todayIsoLocal()}
+            min={etTodayIso()}
             value={date}
             onChange={(e) => handleDateChange(e.target.value)}
             className={cn(
@@ -147,12 +147,10 @@ export function BookingPicker({
               aria-label="Available consultation time slots"
             >
               {availableSlots.map((option) => {
-                const selected =
-                  slot?.timeFrom === option.timeFrom &&
-                  slot?.timeTo === option.timeTo;
+                const selected = slot?.id === option.id;
                 return (
                   <button
-                    key={`${option.timeFrom}-${option.timeTo}`}
+                    key={option.id}
                     type="button"
                     role="radio"
                     aria-checked={selected}
